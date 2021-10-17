@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,8 +25,7 @@ public class UnitCommandGiver : MonoBehaviour
         enabled = false;
     }
 
-#if (UNITY_SERVER == false)
-    void Update()
+    private void Update()
     {
         if (!Mouse.current.rightButton.wasPressedThisFrame)
         {
@@ -57,22 +53,22 @@ public class UnitCommandGiver : MonoBehaviour
         else
         {
             TryMove(hit.point);
-        }        
+        }
     }
-#endif
+
 
     private void TryTarget(Targetable target)
     {
-        /*foreach (Unit unit in unitSelectionHandler.GetSelectedUnits())
+        foreach (Unit unit in unitSelectionHandler.GetSelectedUnits())
         {
             NetworkObject targetNetworkObj = target.GetComponent<NetworkObject>();
             unit.GetTargeter().CmdSetTargetServerRpc(targetNetworkObj.OwnerClientId, targetNetworkObj.NetworkObjectId);
-        }*/
+        }
     }
 
     private void TryMove(Vector3 point)
     {
-        foreach(Unit unit in unitSelectionHandler.GetSelectedUnits())
+        foreach (Unit unit in unitSelectionHandler.GetSelectedUnits())
         {
             unit.GetUnitMovement().MoveClient(point);
         }

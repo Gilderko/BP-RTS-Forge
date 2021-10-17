@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Targeter : NetworkBehaviour
@@ -9,7 +6,7 @@ public class Targeter : NetworkBehaviour
 
     #region Server
 
-#if UNITY_SERVER
+
     public void Start()
     {
         if (IsServer)
@@ -25,7 +22,7 @@ public class Targeter : NetworkBehaviour
             GameOverHandler.ServerOnGameOver -= ServerHandleGameOver;
         }
     }
-#endif
+
 
     private void ServerHandleGameOver()
     {
@@ -33,9 +30,9 @@ public class Targeter : NetworkBehaviour
     }
 
 
-    public void CmdSetTargetServerRpc(ulong playerID, ulong instanceID)
+    public void CmdSetTargetServerRpc(int playerID, int instanceID)
     {
-        /*var targetGameObject = NetworkManager.ConnectedClients[playerID].OwnedObjects.Find(obj => obj.NetworkObjectId == instanceID);
+        var targetGameObject = RTSNetworkManager.Instance..ConnectedClients[playerID].OwnedObjects.Find(obj => obj.NetworkObjectId == instanceID);
 
         Targetable newTarget;
 
@@ -44,7 +41,7 @@ public class Targeter : NetworkBehaviour
             return;
         }
 
-        target = newTarget;*/
+        target = newTarget;
     }
 
     public void ClearTarget()
@@ -52,7 +49,7 @@ public class Targeter : NetworkBehaviour
         target = null;
     }
 
-#endregion
+    #endregion
 
     public Targetable GetTarget()
     {

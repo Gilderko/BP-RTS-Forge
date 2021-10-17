@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Building : NetworkBehaviour
@@ -18,32 +16,32 @@ public class Building : NetworkBehaviour
 
     private void Start()
     {
-#if UNITY_SERVER
+
         if (IsServer)
         {
             ServerOnBuildingSpawned?.Invoke(this);
         }
-#else
+
         if (IsOwner)
         {
             AuthorityOnBuildingSpawned?.Invoke(this);
         }
-#endif
+
     }
 
     private void OnDestroy()
     {
-#if UNITY_SERVER
+
         if (IsServer)
         {
             ServerOnBuildingDespawned?.Invoke(this);
         }
-#else
+
         if (IsOwner)
         {
             AuthorityOnBuildingDespawned?.Invoke(this);
         }
-#endif
+
     }
 
     public GameObject GetBuildingPreview()

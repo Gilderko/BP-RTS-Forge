@@ -2,8 +2,8 @@
 
 namespace Forge.ServerRegistry.Messaging.Interpreters
 {
-	public interface IServerRegistryInterpreter : IMessageInterpreter
-	{
+    public interface IServerRegistryInterpreter : IMessageInterpreter
+    {
 
-	}
+    }
 }

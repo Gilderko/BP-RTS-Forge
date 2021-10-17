@@ -3,19 +3,19 @@ using Forge.Serialization;
 
 namespace Forge.Networking.Messaging.Messages
 {
-	[MessageContract(6, typeof(ForgeReadyForEngineMessage))]
-	public class ForgeReadyForEngineMessage : ForgeMessage
-	{
-		public override IMessageInterpreter Interpreter => new ForgeReadyForEngineInterpreter();
+    [MessageContract(6, typeof(ForgeReadyForEngineMessage))]
+    public class ForgeReadyForEngineMessage : ForgeMessage
+    {
+        public override IMessageInterpreter Interpreter => new ForgeReadyForEngineInterpreter();
 
-		public override void Deserialize(BMSByte buffer)
-		{
-			// Nothing to deserialize
-		}
+        public override void Deserialize(BMSByte buffer)
+        {
+            // Nothing to deserialize
+        }
 
-		public override void Serialize(BMSByte buffer)
-		{
-			// Nothing to serialize
-		}
-	}
+        public override void Serialize(BMSByte buffer)
+        {
+            // Nothing to serialize
+        }
+    }
 }

@@ -1,7 +1,6 @@
+using Forge.Networking.Unity.Messages;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class GameOverHandler : NetworkBehaviour
 {
@@ -11,10 +10,8 @@ public class GameOverHandler : NetworkBehaviour
 
     public static event Action<string> ClientOnGameOver;
 
-
-
     #region Server
-#if UNITY_SERVER
+
     private void Start()
     {
         if (IsServer)
@@ -32,7 +29,6 @@ public class GameOverHandler : NetworkBehaviour
             UnitBase.ServerOnBaseDespawned -= ServerHandleBaseDespawned;
         }
     }
-#endif
 
     private void ServerHandleBaseSpawned(UnitBase unitBase)
     {
@@ -48,21 +44,29 @@ public class GameOverHandler : NetworkBehaviour
             return;
         }
 
-        ulong winnerIndex = bases[0].OwnerClientId;
-
-        RpcGameOverClientRpc($"Player {winnerIndex.ToString()}");
+        int winnerIndex = bases[0].OwnerClientId;
+        ServerSendGameOverMessage(winnerIndex);
 
         ServerOnGameOver?.Invoke();
     }
 
-#endregion
+    private void ServerSendGameOverMessage(int winnerIndex)
+    {
+        AnnounceWinnerMessage announceMessage = new AnnounceWinnerMessage();
+        announceMessage.ObjectId = ObjectId;
+        announceMessage.WinningPlayerName = winnerIndex.ToString();
 
-#region Client
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendMessage(announceMessage);
+    }
 
-    private void RpcGameOverClientRpc(string winner)
+    #endregion
+
+    #region Client
+
+    public void ClientHandleGameOver(string winner)
     {
         ClientOnGameOver?.Invoke(winner);
     }
 
-#endregion
+    #endregion
 }

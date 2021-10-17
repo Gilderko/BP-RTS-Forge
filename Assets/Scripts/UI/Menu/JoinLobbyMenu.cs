@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class JoinLobbyMenu : MonoBehaviour
@@ -10,7 +8,7 @@ public class JoinLobbyMenu : MonoBehaviour
     [SerializeField] private TMP_InputField addressInput;
     [SerializeField] private Button joinButton;
 
-#if (UNITY_SERVER == false)
+
     private void OnEnable()
     {
         RTSNetworkManager.ClientOnConnected += HandleClientConnected;
@@ -22,14 +20,14 @@ public class JoinLobbyMenu : MonoBehaviour
         RTSNetworkManager.ClientOnConnected -= HandleClientConnected;
         RTSNetworkManager.ClientOnDisconnected -= HandleClientDisconnected;
     }
-#endif
+
 
     public void JoinCallback()
     {
         string address = addressInput.text;
 
-        //NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = address;
-        //NetworkManager.Singleton.StartClient();
+        NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = address;
+        NetworkManager.Singleton.StartClient();
 
         joinButton.interactable = false;
     }

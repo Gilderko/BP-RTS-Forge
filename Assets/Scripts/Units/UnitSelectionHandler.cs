@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,7 +6,7 @@ using UnityEngine.InputSystem;
 public class UnitSelectionHandler : MonoBehaviour
 {
     [SerializeField] private RectTransform unitSelectionArea = null;
-    
+
     [SerializeField] private LayerMask layerMask = new LayerMask();
 
     private Vector2 startPosition;
@@ -20,7 +18,7 @@ public class UnitSelectionHandler : MonoBehaviour
 
     private void Start()
     {
-        /*mainCamera = Camera.main;
+        mainCamera = Camera.main;
 
         if (NetworkManager.Singleton.IsConnectedClient)
         {
@@ -29,7 +27,7 @@ public class UnitSelectionHandler : MonoBehaviour
         }
 
         Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
-        GameOverHandler.ClientOnGameOver += ClientHandleGameOver;       */
+        GameOverHandler.ClientOnGameOver += ClientHandleGameOver;
     }
 
     private void ClientHandleGameOver(string winnerName)
@@ -47,10 +45,10 @@ public class UnitSelectionHandler : MonoBehaviour
         selectedUnits.Remove(unit);
     }
 
-#if (UNITY_SERVER == false)
+
     private void Update()
     {
-        /*if (!NetworkManager.Singleton.IsConnectedClient)
+        if (!NetworkManager.Singleton.IsConnectedClient)
         {
             return;
         }
@@ -65,11 +63,11 @@ public class UnitSelectionHandler : MonoBehaviour
         }
         else if (Mouse.current.leftButton.isPressed)
         {
-            Debug.Log("Is pressed");    
+            Debug.Log("Is pressed");
             UpdateSelectionArea();
-        }*/
+        }
     }
-#endif
+
 
     private void StartSelectionArea()
     {
@@ -81,7 +79,7 @@ public class UnitSelectionHandler : MonoBehaviour
             }
 
             selectedUnits.Clear();
-        }        
+        }
 
         unitSelectionArea.gameObject.SetActive(true);
 
@@ -93,10 +91,10 @@ public class UnitSelectionHandler : MonoBehaviour
     private void UpdateSelectionArea()
     {
         Vector2 mousePosition = Mouse.current.position.ReadValue();
-     
+
         float areaWidth = mousePosition.x - startPosition.x;
         float areaHeight = mousePosition.y - startPosition.y;
-        
+
         unitSelectionArea.sizeDelta = new Vector2(Mathf.Abs(areaWidth), Mathf.Abs(areaHeight));
         unitSelectionArea.anchoredPosition = startPosition +
             new Vector2(areaWidth / 2, areaHeight / 2);
@@ -140,7 +138,7 @@ public class UnitSelectionHandler : MonoBehaviour
 
             Debug.Log($"You have amount of units {player.GetMyUnits().Count()}");
 
-            foreach(Unit unit in player.GetMyUnits())
+            foreach (Unit unit in player.GetMyUnits())
             {
                 if (selectedUnits.Contains(unit))
                 {
@@ -155,7 +153,7 @@ public class UnitSelectionHandler : MonoBehaviour
                     unit.Select();
                 }
             }
-        }        
+        }
     }
 
     public IEnumerable<Unit> GetSelectedUnits()

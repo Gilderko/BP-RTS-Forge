@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitBase : NetworkBehaviour
@@ -10,11 +8,11 @@ public class UnitBase : NetworkBehaviour
     public static event Action<UnitBase> ServerOnBaseSpawnend;
     public static event Action<UnitBase> ServerOnBaseDespawned;
 
-    public static event Action<ulong> ServerOnPlayerDie;
+    public static event Action<int> ServerOnPlayerDie;
 
     #region Server
 
-#if UNITY_SERVER
+
     public void Start()
     {
         if (IsServer)
@@ -32,7 +30,7 @@ public class UnitBase : NetworkBehaviour
             health.ServerOnDie -= ServerHandleDeath;
         }
     }
-#endif
+
 
     private void ServerHandleDeath()
     {
@@ -40,5 +38,5 @@ public class UnitBase : NetworkBehaviour
 
         Destroy(gameObject);
     }
-#endregion
+    #endregion
 }

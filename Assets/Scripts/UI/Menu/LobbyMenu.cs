@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,13 +11,13 @@ public class LobbyMenu : MonoBehaviour
     [SerializeField] private RectTransform playerParent;
     [SerializeField] private PlayerLobbyUIInstance playerLobbyUI;
 
-#if (UNITY_SERVER == false)
+
     private void Start()
     {
         RTSNetworkManager.ClientOnConnected += HandleClientConnected;
         RTSPlayer.AuthorityOnPartyOwnerChanged += AuthorityHandlePartyOwnerStateUpdate;
         RTSPlayer.ClientOnInfoUpdated += ClientHandleInfoUpdated;
-    }    
+    }
 
     private void OnDestroy()
     {
@@ -27,7 +25,7 @@ public class LobbyMenu : MonoBehaviour
         RTSPlayer.AuthorityOnPartyOwnerChanged -= AuthorityHandlePartyOwnerStateUpdate;
         RTSPlayer.ClientOnInfoUpdated -= ClientHandleInfoUpdated;
     }
-#endif
+
 
     private void AuthorityHandlePartyOwnerStateUpdate(bool state)
     {
@@ -36,18 +34,18 @@ public class LobbyMenu : MonoBehaviour
 
     private void ClientHandleInfoUpdated()
     {
-        /*foreach (Transform child in playerParent.transform)
+        foreach (Transform child in playerParent.transform)
         {
             Destroy(child.gameObject);
         }
 
-        List<RTSPlayer> players = ((RTSNetworkManager) NetworkManager.Singleton).Players;
+        List<RTSPlayer> players = ((RTSNetworkManager)NetworkManager.Singleton).Players;
 
         for (int i = 0; i < players.Count; i++)
         {
-            var playerUIInstance = Instantiate(playerLobbyUI,playerParent);
+            var playerUIInstance = Instantiate(playerLobbyUI, playerParent);
             playerUIInstance.SetName(players[i].GetDisplayName());
-        }*/
+        }
     }
 
     private void HandleClientConnected()
@@ -57,7 +55,7 @@ public class LobbyMenu : MonoBehaviour
 
     public void LeaveLobby()
     {
-       /* if (NetworkManager.Singleton.IsServer)
+        if (NetworkManager.Singleton.IsServer)
         {
             NetworkManager.Singleton.StopServer();
         }
@@ -66,13 +64,13 @@ public class LobbyMenu : MonoBehaviour
             NetworkManager.Singleton.StopClient();
 
             SceneManager.LoadScene(0);
-        }*/
+        }
     }
 
     public void StartGame()
     {
-        /*Debug.Log("Client wants to start");
+        Debug.Log("Client wants to start");
         Debug.Log((NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId).IsPartyOwner());
-        (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId).CmdStartGameServerRpc();*/
+        (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId).CmdStartGameServerRpc();
     }
 }

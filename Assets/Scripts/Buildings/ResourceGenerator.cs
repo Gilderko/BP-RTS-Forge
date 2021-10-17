@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceGenerator : NetworkBehaviour
@@ -14,13 +11,12 @@ public class ResourceGenerator : NetworkBehaviour
 
     #region Server
 
-#if UNITY_SERVER
     public void Start()
     {
         if (IsServer)
         {
             timer = interval;
-            player = (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(OwnerClientId);
+            player = RTSNetworkManager.Instance.GetRTSPlayerByUID(OwnerClientId);
 
             health.ServerOnDie += ServerHandleDie;
             GameOverHandler.ServerOnGameOver += ServerHandleGameOver;
@@ -42,11 +38,11 @@ public class ResourceGenerator : NetworkBehaviour
 
         if (timer <= 0)
         {
-            player.AddResources(resourcesPerInterval);
+            player.ServerAddResources(resourcesPerInterval);
             timer += interval;
         }
     }
-#endif
+
 
     private void ServerHandleGameOver()
     {
@@ -57,5 +53,5 @@ public class ResourceGenerator : NetworkBehaviour
     {
         Destroy(gameObject);
     }
-#endregion
+    #endregion
 }

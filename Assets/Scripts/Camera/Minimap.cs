@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -12,22 +10,22 @@ public class Minimap : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     private Transform playerCameraTransform;
 
-#if (UNITY_SERVER == false)
+
     private void Start()
     {
-        /*if (NetworkManager.Singleton.IsClient)
+        if (!RTSNetworkManager.Instance.Facade.IsServer)
         {
             playerCameraTransform = (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId).GetCameraTransform();
-        }*/
+        }
     }
-#endif
+
 
     private void MoveCamera()
     {
         Vector2 mousePos = Mouse.current.position.ReadValue();
 
         Vector2 localPos;
-        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapRect,mousePos,null,out localPos))
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapRect, mousePos, null, out localPos))
         {
             return;
         }

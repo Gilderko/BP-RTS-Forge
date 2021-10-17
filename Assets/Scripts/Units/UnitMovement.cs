@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem;
 
 public class UnitMovement : NetworkBehaviour
 {
@@ -55,7 +51,7 @@ public class UnitMovement : NetworkBehaviour
         agent.SetDestination(position);
     }
 
-#if UNITY_SERVER == false
+
     private void Update()
     {
         if (IsClient)
@@ -82,7 +78,6 @@ public class UnitMovement : NetworkBehaviour
 
                 agent.ResetPath();
             }
-        }        
+        }
     }
-#endif
 }

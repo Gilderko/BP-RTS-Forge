@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using TMPro;
 using UnityEngine.UI;
-using UnityEngine.AI;
 
 public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 {
@@ -17,55 +14,56 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     [SerializeField] private float spawnMoveRange = 7;
     [SerializeField] private float unitSpawnDuration = 5f;
 
-    /*private NetworkVariable<int> queuedUnits = new NetworkVariable<int>(
+    private NetworkVariable<int> queuedUnits = new NetworkVariable<int>(
         new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });
 
     private NetworkVariable<float> unitTimer = new NetworkVariable<float>(
-        new NetworkVariableSettings() {WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });*/
+        new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });
 
     private float progressImageVelocity;
 
     private void Update()
     {
-#if UNITY_SERVER       
-        
-        ProduceUnits();        
-#else
-        UpdateTimerDisplay();
-#endif
+        if (IsServer)
+        {
+            ProduceUnits();
+        }
+        if (IsClient)
+        {
+            UpdateTimerDisplay();
+        }
     }
 
     public void Start()
     {
-#if UNITY_SERVER
         if (IsServer)
         {
             health.ServerOnDie += ServerHandleDie;
         }
-#else
+
         if (IsClient)
         {
-            //queuedUnits.OnValueChanged += ClientHandleQueuedUnitsUpdated;
+            queuedUnits.OnValueChanged += ClientHandleQueuedUnitsUpdated;
         }
-#endif
+
     }
 
     private void OnDestroy()
     {
-#if UNITY_SERVER
+
         if (IsServer)
         {
             health.ServerOnDie -= ServerHandleDie;
         }
-#else
+
         if (IsClient)
         {
-           // queuedUnits.OnValueChanged -= ClientHandleQueuedUnitsUpdated;
+            queuedUnits.OnValueChanged -= ClientHandleQueuedUnitsUpdated;
         }
-#endif
+
     }
 
-#region Server
+    #region Server
 
     private void ServerHandleDie()
     {
@@ -75,7 +73,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
     private void CmdSpawnUnitServerRpc()
     {
-        /*if (queuedUnits.Value == maxUnitQue)
+        if (queuedUnits.Value == maxUnitQue)
         {
             return;
         }
@@ -89,12 +87,12 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
         queuedUnits.Value++;
 
-        player.AddResources(-unitPrefab.GetResourceCost());*/
+        player.ServerAddResources(-unitPrefab.GetResourceCost());
     }
 
     private void ProduceUnits()
     {
-       /* if (queuedUnits.Value == 0)
+        if (queuedUnits.Value == 0)
         {
             return;
         }
@@ -108,15 +106,15 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
         GameObject spawnedUnit = Instantiate(unitPrefab.gameObject, spawnLocation.position, spawnLocation.rotation);
 
-        spawnedUnit.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);        
+        spawnedUnit.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
 
         queuedUnits.Value--;
-        unitTimer.Value = 0.0f;*/
+        unitTimer.Value = 0.0f;
     }
 
-#endregion
+    #endregion
 
-#region Client
+    #region Client
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -132,11 +130,11 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     private void ClientHandleQueuedUnitsUpdated(int oldAmount, int newAmount)
     {
         remainingUnitsText.text = newAmount.ToString();
-    }    
+    }
 
     private void UpdateTimerDisplay()
     {
-        /*float newProgress = unitTimer.Value / unitSpawnDuration;
+        float newProgress = unitTimer.Value / unitSpawnDuration;
 
         if (newProgress < unitProgressImage.fillAmount)
         {
@@ -145,7 +143,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         else
         {
             unitProgressImage.fillAmount = Mathf.SmoothDamp(unitProgressImage.fillAmount, newProgress, ref progressImageVelocity, 0.1f);
-        }*/
+        }
     }
-#endregion
+    #endregion
 }

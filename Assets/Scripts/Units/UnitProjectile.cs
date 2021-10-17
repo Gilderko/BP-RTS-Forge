@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitProjectile : NetworkBehaviour
@@ -22,7 +20,7 @@ public class UnitProjectile : NetworkBehaviour
     #region Server
 
 
-#if UNITY_SERVER
+
     private void OnTriggerEnter(Collider other)
     {
         if (IsServer)
@@ -47,14 +45,14 @@ public class UnitProjectile : NetworkBehaviour
             health.DealDamage(damageToDeal);
 
             DestroySelf();
-        }       
+        }
     }
-#endif
- 
+
+
     private void DestroySelf()
     {
         Destroy(gameObject);
     }
 
-#endregion
+    #endregion
 }

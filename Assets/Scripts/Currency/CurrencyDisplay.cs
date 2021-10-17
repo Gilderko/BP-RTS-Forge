@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
-using System;
+using UnityEngine;
 
 public class CurrencyDisplay : MonoBehaviour
 {
@@ -10,22 +7,21 @@ public class CurrencyDisplay : MonoBehaviour
 
     private RTSPlayer player;
 
-#if (UNITY_SERVER == false)
     private void Start()
     {
-        /*if (NetworkManager.Singleton.IsClient)
+        if (!RTSNetworkManager.Instance.Facade.IsServer)
         {
-            player = (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId);
+            player = RTSNetworkManager.Instance.GetRTSPlayerByUID(RTSNetworkManager.Instance.LocalClientId);
             ClientHandleResourcesUpdated(player.GetResources());
             player.ClientOnResourcesUpdated += ClientHandleResourcesUpdated;
-        } */
+        }
     }
 
     private void OnDestroy()
     {
         player.ClientOnResourcesUpdated -= ClientHandleResourcesUpdated;
     }
-#endif
+
 
     private void ClientHandleResourcesUpdated(int obj)
     {

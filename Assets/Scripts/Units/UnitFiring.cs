@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitFiring : NetworkBehaviour
@@ -15,7 +13,7 @@ public class UnitFiring : NetworkBehaviour
 
     #region Server
 
-#if UNITY_SERVER
+
     private void Update()
     {
         if (IsServer)
@@ -40,20 +38,20 @@ public class UnitFiring : NetworkBehaviour
             {
                 Quaternion projectRotation = Quaternion.LookRotation(target.GetAimAtPoint().position - projectileSpawnPoint.position);
 
-                GameObject projectileInstance = Instantiate(projectilePrefab, projectileSpawnPoint.position, projectRotation);                
-                
+                GameObject projectileInstance = Instantiate(projectilePrefab, projectileSpawnPoint.position, projectRotation);
+
                 projectileInstance.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
 
                 lastFireTime = Time.time;
             }
-        }        
+        }
     }
-#endif
+
 
     private bool CanFireAtTarget()
     {
         return (targeter.GetTarget().transform.position - transform.position).sqrMagnitude <= fireRange * fireRange;
     }
 
-#endregion
+    #endregion
 }

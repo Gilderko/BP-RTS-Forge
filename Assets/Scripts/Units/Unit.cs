@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
-using System;
 
 public class Unit : NetworkBehaviour
 {
@@ -19,50 +17,50 @@ public class Unit : NetworkBehaviour
     public static event Action<Unit> ServerOnUnitDespawned;
 
     public static event Action<Unit> AuthorityOnUnitSpawned;
-    public static event Action<Unit> AuthorityOnUnitDespawned;    
+    public static event Action<Unit> AuthorityOnUnitDespawned;
 
     public void Start()
     {
-#if UNITY_SERVER
+
         if (IsServer)
         {
             ServerOnUnitSpawned?.Invoke(this);
             health.ServerOnDie += ServerHandleDie;
         }
-#else
+
         if (IsOwner)
         {
             AuthorityOnUnitSpawned?.Invoke(this);
         }
-#endif
+
     }
 
     private void OnDestroy()
     {
-#if UNITY_SERVER
+
         if (IsServer)
         {
             health.ServerOnDie -= ServerHandleDie;
             ServerOnUnitDespawned?.Invoke(this);
         }
-#else
+
         if (IsOwner)
         {
             AuthorityOnUnitDespawned?.Invoke(this);
         }
-#endif
+
     }
 
-#region Server
+    #region Server
 
     private void ServerHandleDie()
     {
         Destroy(gameObject);
     }
 
-#endregion
+    #endregion
 
-#region Client
+    #region Client
 
     public void Select()
     {
@@ -84,7 +82,7 @@ public class Unit : NetworkBehaviour
         onDeselected.Invoke();
     }
 
-#endregion
+    #endregion
 
     public UnitMovement GetUnitMovement()
     {

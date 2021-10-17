@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,7 +18,7 @@ public class CameraController : NetworkBehaviour
 
     #region Client
 
-#if (UNITY_SERVER == false)
+
     private void Update()
     {
         if (!IsLocalPlayer || !Application.isFocused)
@@ -32,7 +28,7 @@ public class CameraController : NetworkBehaviour
 
         UpdateCameraPosition();
     }
-#endif
+
 
     private void UpdateCameraPosition()
     {
@@ -62,7 +58,7 @@ public class CameraController : NetworkBehaviour
             }
 
             pos += cursorMovement.normalized * speed * Time.deltaTime;
-        }       
+        }
         else
         {
             pos += new Vector3(prevInput.x, 0f, prevInput.y) * speed * Time.deltaTime;
@@ -92,7 +88,7 @@ public class CameraController : NetworkBehaviour
             controls.Player.MoveCamera.canceled += SetPrevInput;
 
             controls.Enable();
-        }        
+        }
     }
 
     private void SetPrevScrollInput(InputAction.CallbackContext ctx)

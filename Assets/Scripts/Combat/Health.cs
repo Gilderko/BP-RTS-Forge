@@ -1,87 +1,91 @@
+using Forge.Networking.Messaging;
+using Forge.Networking.Unity.Messages;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Health : NetworkBehaviour
 {
     [SerializeField] private int maxHealth = 100;
 
-    //private NetworkVariable<int> currentHealth = new NetworkVariable<int>(
-    //    new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });
+    private int currentHealth;
 
     public event Action ServerOnDie;
 
     public event Action<int, int> ClientOnHealthUpdated;
 
+    private MessagePool<UpdateHealthMessage> healthPool = new MessagePool<UpdateHealthMessage>();
+
     public void Start()
     {
-#if UNITY_SERVER
         if (IsServer)
         {
-            currentHealth.Value = maxHealth;
+            currentHealth = maxHealth;
+            ServerUpdateHealth();
             UnitBase.ServerOnPlayerDie += ServerHandlePlayerDie;
         }
-#else
-        if (IsClient)
-        {
-            //currentHealth.OnValueChanged += HandeHealthUpdated;
-        }
-#endif
     }
 
     private void OnDestroy()
     {
-#if UNITY_SERVER
         if (IsServer)
         {
             UnitBase.ServerOnPlayerDie -= ServerHandlePlayerDie;
         }
-#else
-        if (IsClient)
-        {
-            //currentHealth.OnValueChanged += HandeHealthUpdated;
-        }
-#endif
     }
 
-#region Server
+    #region Server
 
-    private void ServerHandlePlayerDie(ulong connectionID)
+    private void ServerHandlePlayerDie(int connectionID)
     {
         if (connectionID != OwnerClientId)
         {
             return;
         }
 
-        //DealDamage(currentHealth.Value);
+        DealDamage(currentHealth);
     }
 
-    /*public void DealDamage(int damageAmount)
+    public void DealDamage(int damageAmount)
     {
-        if (currentHealth.Value <= 0)
+        if (currentHealth <= 0)
         {
             return;
         }
 
-        currentHealth.Value = Mathf.Clamp(currentHealth.Value - damageAmount, 0, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth - damageAmount, 0, maxHealth);
+        ServerUpdateHealth();
 
-        if (currentHealth.Value != 0)
+        if (currentHealth != 0)
         {
             return;
         }
 
         ServerOnDie?.Invoke();
-    }*/
-
-#endregion
-
-#region Client
-
-    private void HandeHealthUpdated(int oldHealth, int newHealth)
-    {
-        ClientOnHealthUpdated(newHealth,maxHealth);
     }
 
-#endregion
+    private void ServerUpdateHealth()
+    {
+        var newMessage = healthPool.Get();
+        newMessage.EntityID = ObjectId;
+        newMessage.NewHealthValue = currentHealth;
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(newMessage);
+    }
+
+    #endregion
+
+    #region Client
+
+    public void ClientSetHealth(int newHealthValue)
+    {
+        currentHealth = newHealthValue;
+        HandeHealthUpdated(currentHealth);
+    }
+
+    private void HandeHealthUpdated(int newHealth)
+    {
+        ClientOnHealthUpdated(newHealth, maxHealth);
+    }
+
+    #endregion
 }

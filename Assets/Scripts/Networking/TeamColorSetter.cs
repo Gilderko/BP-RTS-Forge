@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TeamColorSetter : NetworkBehaviour
@@ -13,7 +11,7 @@ public class TeamColorSetter : NetworkBehaviour
 
     public void Start()
     {
-        /*if (IsClient)
+        if (IsClient)
         {
             teamColor.OnValueChanged += HandleTeamColorUpdated;
         }
@@ -22,7 +20,7 @@ public class TeamColorSetter : NetworkBehaviour
             RTSPlayer player = (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(OwnerClientId);
 
             teamColor.Value = player.GetTeamColor();
-        }*/
+        }
     }
 
     #endregion
@@ -36,7 +34,7 @@ public class TeamColorSetter : NetworkBehaviour
             foreach (Material material in render.materials)
             {
                 material.SetColor("_BaseColor", newColor);
-            }           
+            }
         }
     }
 
