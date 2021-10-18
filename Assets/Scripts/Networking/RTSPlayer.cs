@@ -29,23 +29,23 @@ public class RTSPlayer : NetworkBehaviour
     [SerializeField]
     private Vector2 cameraStartOffset = new Vector2(-5, -5);
 
-    private IPlayerSignature playerId;
+    private INetPlayer forgePlayer;
+
+    // Synced values
 
     private int resources = 0;
     private MessagePool<UpdateResourcesMessage> resourcesPool = new MessagePool<UpdateResourcesMessage>();
 
     private bool isPartyOwner = false;
-    
 
-    private NetworkVariable<string> playerName = new NetworkVariable<string>(
-        new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone },
-        "");
+    private string playerName = "";
 
-    private NetworkVariable<Vector3> startPosition = new NetworkVariable<Vector3>(
-        new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone },
-        new Vector3(0, 0, 21));
+    private Vector3 cameraStartPosition = new Vector3(0, 0, 21);
+
+    // Synced values
 
     public event Action<int> ClientOnResourcesUpdated;
+    public event Action<Color> ClientOnColorUpdated;
 
     public static event Action ClientOnInfoUpdated;
     public static event Action<bool> AuthorityOnPartyOwnerChanged;
@@ -60,8 +60,7 @@ public class RTSPlayer : NetworkBehaviour
 
     public void Start()
     {
-        ((RTSNetworkManager)NetworkManager.Singleton).Players.Add(this);
-
+        RTSNetworkManager.Instance.Players.Add(this);        
 
         if (IsServer)
         {
@@ -71,9 +70,7 @@ public class RTSPlayer : NetworkBehaviour
         if (IsClient)
         {
             OnStartAuthority();
-            OnStartClient();
         }
-
     }
 
     public void OnDestroy()
@@ -88,7 +85,6 @@ public class RTSPlayer : NetworkBehaviour
         {
             OnStopClient();
         }
-
     }
 
 
@@ -96,15 +92,22 @@ public class RTSPlayer : NetworkBehaviour
 
     public void OnStartServer()
     {
+        forgePlayer = RTSNetworkManager.Instance.Facade.NetworkMediator.PlayerRepository.GetPlayer(OwnerSignatureId);
+
         Unit.ServerOnUnitSpawned += ServerHandleUnitSpawned;
         Unit.ServerOnUnitDespawned += ServerHandleUnitDespawned;
         Building.ServerOnBuildingSpawned += ServerHandleBuildingSpawned;
         Building.ServerOnBuildingDespawned += ServerHandleBuildingDespawned;
     }
 
-    public void SetPlayerName(string displayName)
+    public void OnStopServer()
     {
-        playerName.Value = displayName;
+        Unit.ServerOnUnitSpawned -= ServerHandleUnitSpawned;
+        Unit.ServerOnUnitDespawned -= ServerHandleUnitDespawned;
+        Building.ServerOnBuildingSpawned -= ServerHandleBuildingSpawned;
+        Building.ServerOnBuildingDespawned -= ServerHandleBuildingDespawned;
+
+        RTSNetworkManager.Instance.Players.Remove(this);
     }
 
     private void ServerHandleBuildingDespawned(Building building)
@@ -130,17 +133,7 @@ public class RTSPlayer : NetworkBehaviour
         }
 
         myUnits.Add(unit);
-    }
-
-    public void OnStopServer()
-    {
-        Unit.ServerOnUnitSpawned -= ServerHandleUnitSpawned;
-        Unit.ServerOnUnitDespawned -= ServerHandleUnitDespawned;
-        Building.ServerOnBuildingSpawned -= ServerHandleBuildingSpawned;
-        Building.ServerOnBuildingDespawned -= ServerHandleBuildingDespawned;
-
-        ((RTSNetworkManager)NetworkManager.Singleton).Players.Remove(this);
-    }
+    }    
 
     private void ServerHandleUnitDespawned(Unit unit)
     {
@@ -156,46 +149,62 @@ public class RTSPlayer : NetworkBehaviour
     {
         resources += resourcesToAdd;
 
-        ServerSendUpdateResourceMessage();
-
-        ClientHandleResourcesUpdated(resources);
-    }
-
-    private void ServerSendUpdateResourceMessage()
-    {
         var resourceMessage = resourcesPool.Get();
-        resourceMessage.PlayerId = playerId.GetId();
-        resourceMessage.ResourcesValue = resources;
+        resourceMessage.PlayerId = OwnerClientId;
+        resourceMessage.ResourcesValue = resources;        
 
-        RTSNetworkManager.Instance.Facade.NetworkMediator.SendMessage(resourceMessage);
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendMessage(resourceMessage, forgePlayer);
     }
 
-    public void SetTeamColor(Color newColor)
+    public void ServerSetPlayerName(string displayName)
+    {
+        playerName = displayName;
+
+        var message = new ChangePlayerNameMessage();
+        message.NewPlayerName = playerName;
+        message.PlayerId = OwnerClientId;
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(message);
+    }
+
+    public void ServerSetTeamColor(Color newColor)
     {
         teamColor = newColor;
+
+        ClientOnColorUpdated(newColor);
     }
 
-    public void SetPartyOwner(bool state)
+    public void ServerSetTeamOwner(bool state)
     {
-        isPartyOwner.Value = state;
+        isPartyOwner = state;
+
+        var message = new ChangePlayerSessionOwnershipMessage();
+        message.IsOwner = isPartyOwner;
+        message.PlayerId = OwnerClientId;
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(message);
     }
 
-    public void ChangeStartingPosition(Vector3 pos)
+    public void ServerSetStartingCameraPosition(Vector3 pos)
     {
-        startPosition.Value = pos;
-    }
+        cameraStartPosition = pos;
 
+        var message = new SetPlayerCameraStartPositionMessage();
+        message.PosX = pos.x;
+        message.PosY = pos.y;
+        message.PosZ = pos.z;
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(message, forgePlayer);
+    }
 
     public void CmdStartGameServerRpc()
     {
-        Debug.Log(isPartyOwner.Value);
-        Debug.Log("Server RPC Start game");
-        if (!isPartyOwner.Value)
+        if (!isPartyOwner)
         {
             return;
         }
 
-        ((RTSNetworkManager)NetworkManager.Singleton).StartGame();
+        RTSNetworkManager.Instance.StartGame();
     }
 
 
@@ -208,7 +217,7 @@ public class RTSPlayer : NetworkBehaviour
             return;
         }
 
-        if (resources.Value < buildingToPlace.GetPrice())
+        if (resources < buildingToPlace.GetPrice())
         {
             return;
         }
@@ -222,7 +231,7 @@ public class RTSPlayer : NetworkBehaviour
 
         GameObject building = Instantiate(buildingToPlace.gameObject, positionToSpawn, Quaternion.identity);
 
-        building.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+        //building.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
 
         ServerAddResources(-buildingToPlace.GetPrice());
     }
@@ -239,59 +248,13 @@ public class RTSPlayer : NetworkBehaviour
             return;
         }
 
-        isPartyOwner.OnValueChanged += AuthorityHandlePartyOwnerStateUpdated;
+        RTSNetworkManager.Instance.ClientSetLocalPlayer(this);
 
         Unit.AuthorityOnUnitSpawned += AuthorityHandleUnitSpawned;
         Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
         Building.AuthorityOnBuildingSpawned += AuthorityHandleBuildingSpawned;
         Building.AuthorityOnBuildingDespawned += AuthorityHandleBuildingDespawned;
     }
-
-    public void OnStartClient()
-    {
-        playerName.OnValueChanged += ClientHandleDisplayNameUpdated;
-        startPosition.OnValueChanged += ClientHandleStartCameraPositionUpdated;
-    }
-
-
-    private void AuthorityHandlePartyOwnerStateUpdated(bool oldState, bool newState)
-    {
-        if (!IsOwner)
-        {
-            return;
-        }
-
-        AuthorityOnPartyOwnerChanged?.Invoke(newState);
-    }
-
-    private void ClientHandleDisplayNameUpdated(string oldVal, string newVal)
-    {
-        ClientOnInfoUpdated?.Invoke();
-    }
-
-
-    private void AuthorityHandleBuildingDespawned(Building building)
-    {
-        myBuildings.Remove(building);
-    }
-
-
-    private void AuthorityHandleBuildingSpawned(Building building)
-    {
-        myBuildings.Add(building);
-    }
-
-
-    private void ClientHandleStartCameraPositionUpdated(Vector3 oldVec, Vector3 newVec)
-    {
-        if (!IsOwner)
-        {
-            return;
-        }
-
-        cameraTransform.position = new Vector3(newVec.x + cameraStartOffset.x, 21, newVec.z + cameraStartOffset.y);
-    }
-
 
     public void OnStopClient()
     {
@@ -302,7 +265,7 @@ public class RTSPlayer : NetworkBehaviour
             return;
         }
 
-        ((RTSNetworkManager)NetworkManager.Singleton).Players.Remove(this);
+        RTSNetworkManager.Instance.Players.Remove(this);
 
         if (!IsOwner)
         {
@@ -315,6 +278,40 @@ public class RTSPlayer : NetworkBehaviour
         Building.AuthorityOnBuildingDespawned -= AuthorityHandleBuildingDespawned;
     }
 
+    public void AuthoritySetPlayerOwnership(bool newState)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+
+        isPartyOwner = newState;
+        AuthorityOnPartyOwnerChanged?.Invoke(newState);
+    }
+
+    public void ClientSetNewPlayerName(string newVal)
+    {
+        playerName = newVal;
+        ClientOnInfoUpdated?.Invoke();
+    }
+
+    public void ClientSetCameraStartingPosition(Vector3 newVec)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+
+        cameraStartPosition = newVec;
+        cameraTransform.position = new Vector3(newVec.x + cameraStartOffset.x, 21, newVec.z + cameraStartOffset.y);
+    }
+
+    public void ClientSetResources(int newValue)
+    {
+        resources = newValue;
+        ClientOnResourcesUpdated?.Invoke(newValue);
+    }    
+
     private void AuthorityHandleUnitSpawned(Unit unit)
     {
         myUnits.Add(unit);
@@ -325,9 +322,14 @@ public class RTSPlayer : NetworkBehaviour
         myUnits.Remove(unit);
     }
 
-    public void ClientHandleResourcesUpdated(int newValue)
+    private void AuthorityHandleBuildingDespawned(Building building)
     {
-        ClientOnResourcesUpdated?.Invoke(newValue);
+        myBuildings.Remove(building);
+    }
+
+    private void AuthorityHandleBuildingSpawned(Building building)
+    {
+        myBuildings.Add(building);
     }
 
     #endregion
@@ -406,11 +408,11 @@ public class RTSPlayer : NetworkBehaviour
 
     public bool IsPartyOwner()
     {
-        return isPartyOwner.Value;
+        return isPartyOwner;
     }
 
     public string GetDisplayName()
     {
-        return playerName.Value;
+        return playerName;
     }
 }

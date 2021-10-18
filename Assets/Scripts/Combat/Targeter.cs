@@ -32,7 +32,7 @@ public class Targeter : NetworkBehaviour
 
     public void CmdSetTargetServerRpc(int playerID, int instanceID)
     {
-        var targetGameObject = RTSNetworkManager.Instance..ConnectedClients[playerID].OwnedObjects.Find(obj => obj.NetworkObjectId == instanceID);
+       /*var targetGameObject = RTSNetworkManager.Instance..ConnectedClients[playerID].OwnedObjects.Find(obj => obj.NetworkObjectId == instanceID);
 
         Targetable newTarget;
 
@@ -41,7 +41,7 @@ public class Targeter : NetworkBehaviour
             return;
         }
 
-        target = newTarget;
+        target = newTarget;*/
     }
 
     public void ClearTarget()

@@ -1,4 +1,5 @@
-﻿using Forge.Networking.Unity;
+﻿using Forge.Networking.Players;
+using Forge.Networking.Unity;
 using System;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class NetworkBehaviour : MonoBehaviour
 {
     private NetworkEntity _netEntity = null;
 
-    public bool IsOwner { get; set; }
+    public bool IsOwner { get => _netEntity.OwnerID.GetId() == OwnerClientId; }
 
     public bool IsServer { get => RTSNetworkManager.Instance.Facade.IsServer; }
 
@@ -15,7 +16,9 @@ public class NetworkBehaviour : MonoBehaviour
 
     public bool IsLocalPlayer { get => IsClient && IsOwner; }
 
-    public int OwnerClientId { get => GetComponent<NetworkEntity>().OwnerID.GetId(); }
+    public int OwnerClientId { get => _netEntity.OwnerID.GetId(); }
+
+    public IPlayerSignature OwnerSignatureId { get => _netEntity.OwnerID; }
 
     public int ObjectId { get => _netEntity.Id; }
 

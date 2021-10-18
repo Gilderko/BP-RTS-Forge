@@ -39,7 +39,7 @@ public class LobbyMenu : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        List<RTSPlayer> players = ((RTSNetworkManager)NetworkManager.Singleton).Players;
+        List<RTSPlayer> players = RTSNetworkManager.Instance.Players;
 
         for (int i = 0; i < players.Count; i++)
         {
@@ -55,7 +55,7 @@ public class LobbyMenu : MonoBehaviour
 
     public void LeaveLobby()
     {
-        if (NetworkManager.Singleton.IsServer)
+        /*if (NetworkManager.Singleton.IsServer)
         {
             NetworkManager.Singleton.StopServer();
         }
@@ -64,13 +64,13 @@ public class LobbyMenu : MonoBehaviour
             NetworkManager.Singleton.StopClient();
 
             SceneManager.LoadScene(0);
-        }
+        }*/
     }
 
     public void StartGame()
     {
         Debug.Log("Client wants to start");
-        Debug.Log((NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId).IsPartyOwner());
-        (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId).CmdStartGameServerRpc();
+        Debug.Log(RTSNetworkManager.Instance.LocalPlayer.IsPartyOwner());
+        RTSNetworkManager.Instance.LocalPlayer.CmdStartGameServerRpc();
     }
 }

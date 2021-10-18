@@ -20,14 +20,14 @@ public class GameOverDisplay : MonoBehaviour
 
     public void LeaveGame()
     {
-        if (NetworkManager.Singleton.IsServer)
+        /*if (RTSNetworkManager.Instance.IsServer)
         {
-            NetworkManager.Singleton.StopServer();
+            RTSNetworkManager.Instance.StopServer();
         }
-        else if (NetworkManager.Singleton.IsClient)
+        else if (RTSNetworkManager.Instance.IsClient)
         {
-            NetworkManager.Singleton.StopClient();
-        }
+            RTSNetworkManager.Instance.StopClient();
+        }*/
     }
 
     private void ClientHandleGameOver(string playerName)

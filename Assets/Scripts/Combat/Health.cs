@@ -78,13 +78,8 @@ public class Health : NetworkBehaviour
 
     public void ClientSetHealth(int newHealthValue)
     {
-        currentHealth = newHealthValue;
-        HandeHealthUpdated(currentHealth);
-    }
-
-    private void HandeHealthUpdated(int newHealth)
-    {
-        ClientOnHealthUpdated(newHealth, maxHealth);
+        currentHealth = newHealthValue;        
+        ClientOnHealthUpdated(newHealthValue, maxHealth);
     }
 
     #endregion

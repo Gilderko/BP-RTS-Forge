@@ -24,12 +24,12 @@ public class JoinLobbyMenu : MonoBehaviour
 
     public void JoinCallback()
     {
-        string address = addressInput.text;
+        /*string address = addressInput.text;
 
         NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = address;
         NetworkManager.Singleton.StartClient();
 
-        joinButton.interactable = false;
+        joinButton.interactable = false;*/
     }
 
     private void HandleClientConnected()

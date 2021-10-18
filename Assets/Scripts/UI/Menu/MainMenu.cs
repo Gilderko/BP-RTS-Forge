@@ -13,6 +13,6 @@ public class MainMenu : MonoBehaviour
         Debug.Log("Started server");
         landingPagePanel.SetActive(false);
 
-        NetworkManager.Singleton.StartServer();
+        //NetworkManager.Singleton.StartServer();
     }
 }

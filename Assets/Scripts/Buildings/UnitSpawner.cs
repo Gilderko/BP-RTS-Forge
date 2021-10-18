@@ -14,11 +14,11 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     [SerializeField] private float spawnMoveRange = 7;
     [SerializeField] private float unitSpawnDuration = 5f;
 
-    private NetworkVariable<int> queuedUnits = new NetworkVariable<int>(
+    /*private NetworkVariable<int> queuedUnits = new NetworkVariable<int>(
         new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });
 
     private NetworkVariable<float> unitTimer = new NetworkVariable<float>(
-        new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });
+        new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });*/
 
     private float progressImageVelocity;
 
@@ -43,7 +43,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
         if (IsClient)
         {
-            queuedUnits.OnValueChanged += ClientHandleQueuedUnitsUpdated;
+            //queuedUnits.OnValueChanged += ClientHandleQueuedUnitsUpdated;
         }
 
     }
@@ -58,7 +58,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
         if (IsClient)
         {
-            queuedUnits.OnValueChanged -= ClientHandleQueuedUnitsUpdated;
+            //queuedUnits.OnValueChanged -= ClientHandleQueuedUnitsUpdated;
         }
 
     }
@@ -73,7 +73,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
     private void CmdSpawnUnitServerRpc()
     {
-        if (queuedUnits.Value == maxUnitQue)
+        /*if (queuedUnits.Value == maxUnitQue)
         {
             return;
         }
@@ -87,12 +87,12 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
         queuedUnits.Value++;
 
-        player.ServerAddResources(-unitPrefab.GetResourceCost());
+        player.ServerAddResources(-unitPrefab.GetResourceCost());*/
     }
 
     private void ProduceUnits()
     {
-        if (queuedUnits.Value == 0)
+        /*if (queuedUnits.Value == 0)
         {
             return;
         }
@@ -109,7 +109,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         spawnedUnit.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
 
         queuedUnits.Value--;
-        unitTimer.Value = 0.0f;
+        unitTimer.Value = 0.0f;*/
     }
 
     #endregion
@@ -134,7 +134,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
     private void UpdateTimerDisplay()
     {
-        float newProgress = unitTimer.Value / unitSpawnDuration;
+        /*float newProgress = unitTimer.Value / unitSpawnDuration;
 
         if (newProgress < unitProgressImage.fillAmount)
         {
@@ -143,7 +143,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         else
         {
             unitProgressImage.fillAmount = Mathf.SmoothDamp(unitProgressImage.fillAmount, newProgress, ref progressImageVelocity, 0.1f);
-        }
+        }*/
     }
     #endregion
 }

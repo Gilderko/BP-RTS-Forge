@@ -25,8 +25,8 @@ public class UnitProjectile : NetworkBehaviour
     {
         if (IsServer)
         {
-            NetworkObject otherObjectIHit;
-            if (!other.TryGetComponent<NetworkObject>(out otherObjectIHit))
+            NetworkBehaviour otherObjectIHit;
+            if (!other.TryGetComponent<NetworkBehaviour>(out otherObjectIHit))
             {
                 return;
             }

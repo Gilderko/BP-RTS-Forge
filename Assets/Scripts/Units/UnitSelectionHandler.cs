@@ -20,10 +20,9 @@ public class UnitSelectionHandler : MonoBehaviour
     {
         mainCamera = Camera.main;
 
-        if (NetworkManager.Singleton.IsConnectedClient)
+        if (RTSNetworkManager.Instance.IsClient)
         {
-            Debug.Log($"Selection handler looking for {NetworkManager.Singleton.LocalClientId}");
-            player = (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId);
+            player = RTSNetworkManager.Instance.LocalPlayer;
         }
 
         Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
@@ -48,7 +47,7 @@ public class UnitSelectionHandler : MonoBehaviour
 
     private void Update()
     {
-        if (!NetworkManager.Singleton.IsConnectedClient)
+        if (RTSNetworkManager.Instance.IsServer)
         {
             return;
         }

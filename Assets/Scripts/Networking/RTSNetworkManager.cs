@@ -3,13 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class RTSNetworkManager : NetworkBehaviour
+public class RTSNetworkManager : MonoBehaviour
 {
+    public RTSPlayer LocalPlayer { get => localPlayer; }
     public ForgeEngineFacade Facade { get => forgeEngineFacade; }
+
+    public bool IsServer { get => Facade.IsServer; }
+
+    public bool IsClient { get => !Facade.IsServer; }
 
     [SerializeField] private GameObject playerBase = null;
     [SerializeField] private GameOverHandler gameOverHandler = null;
     [SerializeField] private ForgeEngineFacade forgeEngineFacade = null;
+
+    
+
+    private RTSPlayer localPlayer;
 
     private static RTSNetworkManager instance = null;
     private static readonly object padlock = new object();
@@ -39,9 +48,9 @@ public class RTSNetworkManager : NetworkBehaviour
 
     private void Start()
     {
-        OnClientConnectedCallback += HandleClientConnected;
+        /*OnClientConnectedCallback += HandleClientConnected;
         OnClientDisconnectCallback += HandleClientDisconnected;
-        NetworkSceneManager.OnSceneSwitched += OnServerSceneChanged;
+        NetworkSceneManager.OnSceneSwitched += OnServerSceneChanged;*/
     }
 
     private void OnServerSceneChanged()
@@ -51,7 +60,7 @@ public class RTSNetworkManager : NetworkBehaviour
             if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map"))
             {
                 GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandler);
-                gameOverHandlerInstance.GetComponent<NetworkObject>().Spawn();
+                //gameOverHandlerInstance.GetComponent<NetworkObject>().Spawn();
 
                 Transform parentToSpawnPoints = GameObject.FindGameObjectWithTag("SpawnPoints").transform;
 
@@ -74,9 +83,9 @@ public class RTSNetworkManager : NetworkBehaviour
 
                     Debug.Log(player.OwnerClientId);
 
-                    baseInstance.GetComponent<NetworkObject>().SpawnWithOwnership(player.OwnerClientId);
+                    //baseInstance.GetComponent<NetworkObject>().SpawnWithOwnership(player.OwnerClientId);
 
-                    player.ChangeStartingPosition(baseInstance.transform.position);
+                    player.ServerSetStartingCameraPosition(baseInstance.transform.position);
                 }
             }
         }
@@ -105,17 +114,17 @@ public class RTSNetworkManager : NetworkBehaviour
         {
             if (isGameInProgress)
             {
-                DisconnectClient(obj);
+                //DisconnectClient(obj);
                 return;
             }
 
-            RTSPlayer player = ConnectedClients[obj].PlayerObject.GetComponent<RTSPlayer>();
+            /*RTSPlayer player = ConnectedClients[obj].PlayerObject.GetComponent<RTSPlayer>();
 
-            player.SetPlayerName($"Player {Players.Count}");
+            player.ServerSetPlayerName($"Player {Players.Count}");
 
-            player.SetTeamColor(Random.ColorHSV());
+            player.ServerSetTeamColor(Random.ColorHSV());
 
-            player.SetPartyOwner(Players.Count == 1);
+            player.ServerSetTeamOwner(Players.Count == 1);*/
         }
     }
 
@@ -137,7 +146,7 @@ public class RTSNetworkManager : NetworkBehaviour
 
         isGameInProgress = true;
 
-        NetworkSceneManager.SwitchScene("Scene_Map");
+        //NetworkSceneManager.SwitchScene("Scene_Map");
     }
 
     #endregion
@@ -150,5 +159,10 @@ public class RTSNetworkManager : NetworkBehaviour
     public int GetPlayerCount()
     {
         return Players.Count;
+    }
+
+    public void ClientSetLocalPlayer(RTSPlayer myPlayer)
+    {
+        localPlayer = myPlayer; 
     }
 }

@@ -16,7 +16,7 @@ public class UnitFiring : NetworkBehaviour
 
     private void Update()
     {
-        if (IsServer)
+        /*if (IsServer)
         {
             Targetable target = targeter.GetTarget();
 
@@ -44,7 +44,7 @@ public class UnitFiring : NetworkBehaviour
 
                 lastFireTime = Time.time;
             }
-        }
+        }*/
     }
 
 

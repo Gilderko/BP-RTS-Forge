@@ -15,7 +15,7 @@ public class Minimap : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
         if (!RTSNetworkManager.Instance.Facade.IsServer)
         {
-            playerCameraTransform = (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(NetworkManager.Singleton.LocalClientId).GetCameraTransform();
+            playerCameraTransform = RTSNetworkManager.Instance.LocalPlayer.GetCameraTransform();
         }
     }
 

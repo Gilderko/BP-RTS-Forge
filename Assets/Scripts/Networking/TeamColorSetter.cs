@@ -4,22 +4,28 @@ public class TeamColorSetter : NetworkBehaviour
 {
     [SerializeField] private Renderer[] colorRenderers = new Renderer[0];
 
-    /*private NetworkVariable<Color> teamColor = new NetworkVariable<Color>(
-        new NetworkVariableSettings() {WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });*/
+    private Color teamColor = new Color();
 
     #region Server
 
     public void Start()
     {
+        RTSPlayer player = RTSNetworkManager.Instance.GetRTSPlayerByUID(OwnerClientId);
+        teamColor = player.GetTeamColor();
+
         if (IsClient)
         {
-            teamColor.OnValueChanged += HandleTeamColorUpdated;
+            player.ClientOnColorUpdated += HandleTeamColorUpdated;
         }
-        else if (IsServer)
-        {
-            RTSPlayer player = (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(OwnerClientId);
+    }
 
-            teamColor.Value = player.GetTeamColor();
+    private void OnDestroy()
+    {
+        if (IsClient)
+        {
+            RTSPlayer player = RTSNetworkManager.Instance.GetRTSPlayerByUID(OwnerClientId);
+
+            player.ClientOnColorUpdated -= HandleTeamColorUpdated;
         }
     }
 
@@ -27,7 +33,7 @@ public class TeamColorSetter : NetworkBehaviour
 
     #region Client
 
-    private void HandleTeamColorUpdated(Color oldColor, Color newColor)
+    private void HandleTeamColorUpdated(Color newColor)
     {
         foreach (Renderer render in colorRenderers)
         {

@@ -11,7 +11,7 @@ public class CurrencyDisplay : MonoBehaviour
     {
         if (!RTSNetworkManager.Instance.Facade.IsServer)
         {
-            player = RTSNetworkManager.Instance.GetRTSPlayerByUID(RTSNetworkManager.Instance.LocalClientId);
+            player = RTSNetworkManager.Instance.LocalPlayer;
             ClientHandleResourcesUpdated(player.GetResources());
             player.ClientOnResourcesUpdated += ClientHandleResourcesUpdated;
         }

@@ -59,11 +59,11 @@ public class UnitCommandGiver : MonoBehaviour
 
     private void TryTarget(Targetable target)
     {
-        foreach (Unit unit in unitSelectionHandler.GetSelectedUnits())
+        /*foreach (Unit unit in unitSelectionHandler.GetSelectedUnits())
         {
             NetworkObject targetNetworkObj = target.GetComponent<NetworkObject>();
             unit.GetTargeter().CmdSetTargetServerRpc(targetNetworkObj.OwnerClientId, targetNetworkObj.NetworkObjectId);
-        }
+        }*/
     }
 
     private void TryMove(Vector3 point)
