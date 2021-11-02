@@ -12,7 +12,6 @@ public class UnitBase : NetworkBehaviour
 
     #region Server
 
-
     public void Start()
     {
         if (IsServer)

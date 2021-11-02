@@ -53,7 +53,7 @@ public class GameOverHandler : NetworkBehaviour
     private void ServerSendGameOverMessage(int winnerIndex)
     {
         AnnounceWinnerMessage announceMessage = new AnnounceWinnerMessage();
-        announceMessage.ObjectId = ObjectId;
+        announceMessage.ObjectId = EntityId;
         announceMessage.WinningPlayerName = winnerIndex.ToString();
 
         RTSNetworkManager.Instance.Facade.NetworkMediator.SendMessage(announceMessage);

@@ -13,6 +13,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
         public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
         {
             var castedMessage = (UpdateHealthMessage)message;
+
             var entity = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.EntityID);
             entity.OwnerGameObject.GetComponent<Health>().ClientSetHealth(castedMessage.NewHealthValue);
         }

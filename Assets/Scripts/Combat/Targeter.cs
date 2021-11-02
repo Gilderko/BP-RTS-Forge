@@ -6,7 +6,6 @@ public class Targeter : NetworkBehaviour
 
     #region Server
 
-
     public void Start()
     {
         if (IsServer)
@@ -30,18 +29,23 @@ public class Targeter : NetworkBehaviour
     }
 
 
-    public void CmdSetTargetServerRpc(int playerID, int instanceID)
+    public void CmdSetTargetServerRpc(int instanceID)
     {
-       /*var targetGameObject = RTSNetworkManager.Instance..ConnectedClients[playerID].OwnedObjects.Find(obj => obj.NetworkObjectId == instanceID);
+        var targetGameObject = RTSNetworkManager.Instance.Facade.EntityRepository.Get(instanceID);
 
-        Targetable newTarget;
-
-        if (!targetGameObject.TryGetComponent<Targetable>(out newTarget))
+        if (targetGameObject.OwnerID == OwnerSignatureId)
         {
             return;
         }
 
-        target = newTarget;*/
+        Targetable newTarget;
+
+        if (!targetGameObject.OwnerGameObject.TryGetComponent<Targetable>(out newTarget))
+        {
+            return;
+        }
+
+        target = newTarget;
     }
 
     public void ClearTarget()

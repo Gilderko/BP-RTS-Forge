@@ -19,7 +19,6 @@ public class HealthDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         health.ClientOnHealthUpdated -= HandleHealthUpdated;
     }
 
-
     private void HandleHealthUpdated(int current, int max)
     {
         RectTransform transf = healthBarImage.GetComponent<RectTransform>();

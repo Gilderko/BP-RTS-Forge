@@ -10,6 +10,7 @@ public class Unit : NetworkBehaviour
 
     [SerializeField] private UnityEvent onSelected = null;
     [SerializeField] private UnityEvent onDeselected = null;
+    [SerializeField] private int unitId = 0;
 
     [SerializeField] private int resourceCost = 5;
 
@@ -98,4 +99,9 @@ public class Unit : NetworkBehaviour
     {
         return resourceCost;
     }
+
+    /*public int GetPrefabId()
+    {
+        return prefabId;
+    }*/
 }

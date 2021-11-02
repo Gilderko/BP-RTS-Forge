@@ -24,13 +24,14 @@ public class UnitMovement : NetworkBehaviour
             GameOverHandler.ServerOnGameOver -= ServerHandleGameOverClientRpc;
         }
     }
-
-    #endregion
-
     private void ServerHandleGameOverClientRpc()
     {
         agent.ResetPath();
     }
+
+    #endregion
+
+
 
     public void MoveClient(Vector3 position)
     {

@@ -33,7 +33,13 @@ namespace Forge.Networking.Unity
 
         private static IUnityEntity SetupNetworkEntity(IEngineFacade engine, GameObject go, int id, int prefabId, IPlayerSignature ownerId)
         {
-            var entity = go.gameObject.AddComponent<NetworkEntity>();
+            var entity = go.gameObject.GetComponent<NetworkEntity>();
+
+            foreach (var networkBeh in go.GetComponents<NetworkBehaviour>())
+            {
+                networkBeh.SetEntity(entity);
+            }
+
             entity.OwnerID = ownerId;
             entity.Id = id;
             entity.PrefabId = prefabId;

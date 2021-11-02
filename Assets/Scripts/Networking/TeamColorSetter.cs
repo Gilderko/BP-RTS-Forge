@@ -4,18 +4,16 @@ public class TeamColorSetter : NetworkBehaviour
 {
     [SerializeField] private Renderer[] colorRenderers = new Renderer[0];
 
-    private Color teamColor = new Color();
-
     #region Server
 
     public void Start()
     {
         RTSPlayer player = RTSNetworkManager.Instance.GetRTSPlayerByUID(OwnerClientId);
-        teamColor = player.GetTeamColor();
 
         if (IsClient)
         {
             player.ClientOnColorUpdated += HandleTeamColorUpdated;
+            HandleTeamColorUpdated(player.GetTeamColor());
         }
     }
 

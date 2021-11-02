@@ -17,7 +17,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		{
 			var castedMessage = (ChangePlayerSessionOwnershipMessage)message;
 			var player = RTSNetworkManager.Instance.GetRTSPlayerByUID(castedMessage.PlayerId);
-			player.AuthoritySetPlayerOwnership(castedMessage.IsOwner);
+			player.ClientSetPlayerOwnsSession(castedMessage.IsOwner);
 		}
 	}
 }

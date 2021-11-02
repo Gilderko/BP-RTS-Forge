@@ -22,7 +22,6 @@ public class CurrencyDisplay : MonoBehaviour
         player.ClientOnResourcesUpdated -= ClientHandleResourcesUpdated;
     }
 
-
     private void ClientHandleResourcesUpdated(int obj)
     {
         resourcesText.text = $"Gold {obj.ToString()}";

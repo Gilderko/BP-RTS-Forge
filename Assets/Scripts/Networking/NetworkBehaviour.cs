@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 
 // Needs to be implemented with the Entity stuff from Forge
+[RequireComponent(typeof(NetworkEntity))]
 public class NetworkBehaviour : MonoBehaviour
 {
     private NetworkEntity _netEntity = null;
@@ -20,7 +21,7 @@ public class NetworkBehaviour : MonoBehaviour
 
     public IPlayerSignature OwnerSignatureId { get => _netEntity.OwnerID; }
 
-    public int ObjectId { get => _netEntity.Id; }
+    public int EntityId { get => _netEntity.Id; }
 
     public void SetEntity(NetworkEntity networkEntity)
     {

@@ -1,4 +1,10 @@
+using Forge.Factory;
+using Forge.Networking;
+using Forge.Networking.Messaging;
+using Forge.Networking.Players;
 using Forge.Networking.Unity;
+using Forge.Networking.Unity.Messages;
+using Forge.Networking.Unity.Messages.Interpreters;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,18 +13,15 @@ public class RTSNetworkManager : MonoBehaviour
 {
     public RTSPlayer LocalPlayer { get => localPlayer; }
     public ForgeEngineFacade Facade { get => forgeEngineFacade; }
-
     public bool IsServer { get => Facade.IsServer; }
-
     public bool IsClient { get => !Facade.IsServer; }
 
+    [SerializeField] private RTSPlayer playerPrefab = null;
     [SerializeField] private GameObject playerBase = null;
     [SerializeField] private GameOverHandler gameOverHandler = null;
-    [SerializeField] private ForgeEngineFacade forgeEngineFacade = null;
+    [SerializeField] private ForgeEngineFacade forgeEngineFacade = null;       
 
-    
-
-    private RTSPlayer localPlayer;
+    // Singleton pattern
 
     private static RTSNetworkManager instance = null;
     private static readonly object padlock = new object();
@@ -34,23 +37,65 @@ public class RTSNetworkManager : MonoBehaviour
         }
     }
 
+    // Singleton pattern
+
+    // Client variables
+
+    private RTSPlayer localPlayer;
+
     public static event System.Action ClientOnConnected;
     public static event System.Action ClientOnDisconnected;
 
+    // Client variables
+
+    // Server variables
+
+    private MessagePool<SpawnEntityMessage> spawnPool = new MessagePool<SpawnEntityMessage>();
+
+    private int nextEntityId = 0;
+    private bool isGameInProgress = false;
+
+    // Server variables
+
+    // Variables Client and Server
+
+    public IPlayerSignature ServerSignature;
+
     public List<RTSPlayer> Players { get; } = new List<RTSPlayer>();
 
-    private bool isGameInProgress = false;
+    // Variable Client and Server
 
     private void Awake()
     {
         instance = this;
     }
 
-    private void Start()
+    /// <summary>
+    /// Here I need to do all the network starting stuff
+    /// </summary>
+    public void StartServer(ushort portNumber, int maxPlayers)
     {
-        /*OnClientConnectedCallback += HandleClientConnected;
-        OnClientDisconnectCallback += HandleClientDisconnected;
-        NetworkSceneManager.OnSceneSwitched += OnServerSceneChanged;*/
+        Debug.Log("Server start");
+        var factory = AbstractFactory.Get<INetworkTypeFactory>();
+        Facade.NetworkMediator = factory.GetNew<INetworkMediator>();
+        ServerSignature = AbstractFactory.Get<IPlayerSignature>();
+
+        Facade.NetworkMediator.PlayerRepository.onPlayerAddedSubscription += HandleNewClientConnected;
+        Facade.NetworkMediator.PlayerRepository.onPlayerRemovedSubscription += HandleNewClientDisconnected;
+
+        Facade.NetworkMediator.ChangeEngineProxy(Facade);
+        
+        Facade.NetworkMediator.StartServer(portNumber, maxPlayers);
+    }
+
+    private void HandleNewClientDisconnected(INetPlayer player)
+    {
+        ServerHandleClientConnected(player);
+    }
+
+    private void HandleNewClientConnected(INetPlayer player)
+    {
+        ServerHandleClientDisconnected(player);
     }
 
     private void OnServerSceneChanged()
@@ -59,8 +104,18 @@ public class RTSNetworkManager : MonoBehaviour
         {
             if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map"))
             {
-                GameOverHandler gameOverHandlerInstance = Instantiate(gameOverHandler);
-                //gameOverHandlerInstance.GetComponent<NetworkObject>().Spawn();
+                SpawnEntityMessage spawnMessage = spawnPool.Get();
+                spawnMessage.Id = ServerGetNewEntityId();
+                spawnMessage.OwnerId = ServerSignature;
+                spawnMessage.PrefabId = gameOverHandler.GetComponent<NetworkEntity>().PrefabId;
+
+                spawnMessage.Position = Vector3.zero;
+                spawnMessage.Rotation = Quaternion.identity;
+                spawnMessage.Scale = Vector3.one;
+
+                EntitySpawner.SpawnEntityFromMessage(Facade, spawnMessage);
+
+                Facade.NetworkMediator.SendReliableMessage(spawnMessage);
 
                 Transform parentToSpawnPoints = GameObject.FindGameObjectWithTag("SpawnPoints").transform;
 
@@ -79,53 +134,96 @@ public class RTSNetworkManager : MonoBehaviour
                         break;
                     }
 
-                    GameObject baseInstance = Instantiate(playerBase, parentToSpawnPoints.GetChild(index).position, Quaternion.identity);
+                    SpawnEntityMessage baseSpawnMessage = spawnPool.Get();
+                    baseSpawnMessage.Id = ServerGetNewEntityId();
+                    baseSpawnMessage.OwnerId = player.OwnerSignatureId;
+                    baseSpawnMessage.PrefabId = playerBase.GetComponent<NetworkEntity>().PrefabId;
 
-                    Debug.Log(player.OwnerClientId);
+                    baseSpawnMessage.Position = parentToSpawnPoints.GetChild(index).position;
+                    baseSpawnMessage.Rotation = Quaternion.identity;
+                    baseSpawnMessage.Scale = Vector3.one;
 
-                    //baseInstance.GetComponent<NetworkObject>().SpawnWithOwnership(player.OwnerClientId);
+                    EntitySpawner.SpawnEntityFromMessage(Facade, spawnMessage);
 
-                    player.ServerSetStartingCameraPosition(baseInstance.transform.position);
+                    Facade.NetworkMediator.SendReliableMessage(spawnMessage);
+
+                    player.ServerSetStartingCameraPosition(parentToSpawnPoints.GetChild(index).position);
                 }
             }
         }
     }
 
-    private void HandleClientDisconnected(int obj)
+    private void ServerHandleClientConnected(INetPlayer player)
     {
-        if (IsClient)
+        if (isGameInProgress)
         {
-            Players.Clear();
-            ClientOnDisconnected?.Invoke();
+            Facade.NetworkMediator.PlayerRepository.
+            //DisconnectClient(obj);
+            return;
         }
-        else if (IsServer)
+
+        // Need to spawn new player object from a message and tell all the other clients to also spawn it
+        // set its values as name color and owner
+        // the values will be synced with ServerSet used
+
+        var playerSpawnMessage = new SpawnPlayerObjectMessage();
+        playerSpawnMessage.Id = ServerGetNewEntityId();
+        playerSpawnMessage.OwnerId = player.Id;
+        playerSpawnMessage.PrefabId = playerPrefab.GetComponent<NetworkEntity>().PrefabId;
+        
+        playerSpawnMessage.Position = Vector3.zero;
+        playerSpawnMessage.Rotation = Quaternion.identity;
+        playerSpawnMessage.Scale = Vector3.one;
+
+        playerSpawnMessage.PlayerName = $"Player {Players.Count}";
+        playerSpawnMessage.IsTeamOwner = (Players.Count == 1);
+
+        var color = Random.ColorHSV();
+        playerSpawnMessage.Red = color.r;
+        playerSpawnMessage.Green = color.g;
+        playerSpawnMessage.Blue = color.b;
+
+        SpawnPlayerObjectInterpreter.Instance.Interpret(Facade.NetworkMediator, null, playerSpawnMessage);
+
+        Facade.NetworkMediator.SendReliableMessage(playerSpawnMessage);
+
+        // Tell the client to spawn all the previous PlayerObjects (with the values)
+
+        foreach (var spawnedPlayer in Players)
         {
-            Players.RemoveAll(player => player.OwnerClientId == obj);
+            var spawnExistingPlayer = new SpawnPlayerObjectMessage();
+            spawnExistingPlayer.Id = spawnedPlayer.EntityId;
+            spawnExistingPlayer.OwnerId = spawnedPlayer.OwnerSignatureId;
+            spawnExistingPlayer.PrefabId = playerPrefab.GetComponent<NetworkEntity>().PrefabId;
+
+            spawnExistingPlayer.Position = Vector3.zero;
+            spawnExistingPlayer.Rotation = Quaternion.identity;
+            spawnExistingPlayer.Scale = Vector3.one;
+
+            spawnExistingPlayer.PlayerName = spawnedPlayer.GetDisplayName();
+            spawnExistingPlayer.IsTeamOwner = spawnedPlayer.IsPartyOwner();
+
+            var playerColor = spawnedPlayer.GetTeamColor();
+            spawnExistingPlayer.Red = playerColor.r;
+            spawnExistingPlayer.Green = playerColor.g;
+            spawnExistingPlayer.Blue = playerColor.b;
         }
     }
 
-    private void HandleClientConnected(int obj)
+    public void ClientHandleClientConnected(int obj)
     {
-        if (IsClient)
-        {
-            ClientOnConnected?.Invoke();
-        }
-        else if (IsServer)
-        {
-            if (isGameInProgress)
-            {
-                //DisconnectClient(obj);
-                return;
-            }
+        ClientOnConnected?.Invoke();
+    }
 
-            /*RTSPlayer player = ConnectedClients[obj].PlayerObject.GetComponent<RTSPlayer>();
+    private void ServerHandleClientDisconnected(INetPlayer play)
+    {
+        Players.RemoveAll(player => player.OwnerSignatureId == play.Id);
+    }
 
-            player.ServerSetPlayerName($"Player {Players.Count}");
-
-            player.ServerSetTeamColor(Random.ColorHSV());
-
-            player.ServerSetTeamOwner(Players.Count == 1);*/
-        }
+    public void ClientHandleClientDisconnected(int obj)
+    {
+        Players.Clear();
+        ClientOnDisconnected?.Invoke();
     }
 
     public void OnDestroy()
@@ -146,7 +244,20 @@ public class RTSNetworkManager : MonoBehaviour
 
         isGameInProgress = true;
 
-        //NetworkSceneManager.SwitchScene("Scene_Map");
+        LoadSceneFromServerMessage loadSceneMessage = new LoadSceneFromServerMessage();
+        loadSceneMessage.SceneName = "Scene_Map";
+
+        SceneManager.LoadScene(loadSceneMessage.SceneName);
+        Facade.NetworkMediator.SendReliableMessage(loadSceneMessage);
+
+        OnServerSceneChanged();
+    }
+
+    public int ServerGetNewEntityId()
+    {
+        int toReturn = nextEntityId;
+        nextEntityId++;
+        return toReturn;
     }
 
     #endregion

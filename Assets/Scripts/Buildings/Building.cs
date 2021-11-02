@@ -16,7 +16,6 @@ public class Building : NetworkBehaviour
 
     private void Start()
     {
-
         if (IsServer)
         {
             ServerOnBuildingSpawned?.Invoke(this);
@@ -26,7 +25,6 @@ public class Building : NetworkBehaviour
         {
             AuthorityOnBuildingSpawned?.Invoke(this);
         }
-
     }
 
     private void OnDestroy()
@@ -63,4 +61,9 @@ public class Building : NetworkBehaviour
     {
         return price;
     }
+
+    /*public int GetPrefabId()
+    {
+        return prefabId;
+    }*/
 }

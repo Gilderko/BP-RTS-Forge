@@ -2,6 +2,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Forge.Networking.Messaging;
+using Forge.Networking.Unity.Messages;
+using Forge.Networking.Unity;
 
 public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 {
@@ -14,11 +17,17 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     [SerializeField] private float spawnMoveRange = 7;
     [SerializeField] private float unitSpawnDuration = 5f;
 
-    /*private NetworkVariable<int> queuedUnits = new NetworkVariable<int>(
-        new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });
+    // Internal references
+    // Server to Client
+    private MessagePool<SpawnEntityMessage> spawnPool = new MessagePool<SpawnEntityMessage>();
+    private MessagePool<UpdateUnitSpawnerQueMessage> spawnerUpdateClientPool = new MessagePool<UpdateUnitSpawnerQueMessage>();
 
-    private NetworkVariable<float> unitTimer = new NetworkVariable<float>(
-        new NetworkVariableSettings() { WritePermission = NetworkVariablePermission.ServerOnly, ReadPermission = NetworkVariablePermission.Everyone });*/
+    // Client to Server
+    private MessagePool<CommandSpawnUnitsMessage> commandSpawnPool = new MessagePool<CommandSpawnUnitsMessage>();
+
+    private int queuedUnits = 0;
+
+    private float unitTimer = 0f;
 
     private float progressImageVelocity;
 
@@ -40,27 +49,14 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         {
             health.ServerOnDie += ServerHandleDie;
         }
-
-        if (IsClient)
-        {
-            //queuedUnits.OnValueChanged += ClientHandleQueuedUnitsUpdated;
-        }
-
     }
 
     private void OnDestroy()
     {
-
         if (IsServer)
         {
             health.ServerOnDie -= ServerHandleDie;
         }
-
-        if (IsClient)
-        {
-            //queuedUnits.OnValueChanged -= ClientHandleQueuedUnitsUpdated;
-        }
-
     }
 
     #region Server
@@ -71,45 +67,71 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     }
 
 
-    private void CmdSpawnUnitServerRpc()
+    public void CmdSpawnUnitServerRpc()
     {
-        /*if (queuedUnits.Value == maxUnitQue)
+        if (queuedUnits == maxUnitQue)
         {
             return;
         }
 
-        RTSPlayer player = (NetworkManager.Singleton as RTSNetworkManager).GetRTSPlayerByUID(OwnerClientId);
+        RTSPlayer player = RTSNetworkManager.Instance.GetRTSPlayerByUID(OwnerClientId);
 
         if (player.GetResources() < unitPrefab.GetResourceCost())
         {
             return;
         }
 
-        queuedUnits.Value++;
+        queuedUnits++;
 
-        player.ServerAddResources(-unitPrefab.GetResourceCost());*/
+        // Send message to tell client new units have been added to que
+        var queUpdateClient = spawnerUpdateClientPool.Get();
+        queUpdateClient.EntityId = EntityId;
+        queUpdateClient.NewQueAmmount = queuedUnits;
+        queUpdateClient.IsIncrease = true;
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(queUpdateClient);
+
+        player.ServerAddResources(-unitPrefab.GetResourceCost());
     }
 
     private void ProduceUnits()
     {
-        /*if (queuedUnits.Value == 0)
+        if (queuedUnits == 0)
         {
             return;
         }
 
-        unitTimer.Value += Time.deltaTime;
+        unitTimer += Time.deltaTime;
 
-        if (unitTimer.Value < unitSpawnDuration)
+        if (unitTimer < unitSpawnDuration)
         {
             return;
         }
 
-        GameObject spawnedUnit = Instantiate(unitPrefab.gameObject, spawnLocation.position, spawnLocation.rotation);
+        queuedUnits--;
 
-        spawnedUnit.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+        // Send spawning message
+        var spawnMessage = spawnPool.Get();
+        spawnMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
+        spawnMessage.OwnerId = OwnerSignatureId;
+        spawnMessage.PrefabId = unitPrefab.GetComponent<NetworkEntity>().PrefabId;
 
-        queuedUnits.Value--;
-        unitTimer.Value = 0.0f;*/
+        spawnMessage.Position = spawnLocation.position;
+        spawnMessage.Rotation = Quaternion.identity;
+        spawnMessage.Scale = Vector3.one;
+
+        EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, spawnMessage);
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnMessage);        
+
+        // Send message to update number of units in que
+        var spawnerUpdate = spawnerUpdateClientPool.Get();
+        spawnerUpdate.EntityId = EntityId;
+        spawnerUpdate.NewQueAmmount = queuedUnits;
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnerUpdate);
+
+        unitTimer = 0.0f;
     }
 
     #endregion
@@ -123,18 +145,34 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
             return;
         }
 
-        CmdSpawnUnitServerRpc();
+        var commandSpawnMessage = commandSpawnPool.Get();
+        commandSpawnMessage.EntityId = EntityId;
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(commandSpawnMessage);
     }
 
-
-    private void ClientHandleQueuedUnitsUpdated(int oldAmount, int newAmount)
+    private void ClientHandleQueuedUnitsUpdated(int newAmount)
     {
         remainingUnitsText.text = newAmount.ToString();
     }
 
+    public void ClientUpdateQueAmmount(int newAmount, bool isIncrease)
+    {
+        queuedUnits = newAmount;
+        unitTimer = isIncrease ? 0 : unitTimer;
+        ClientHandleQueuedUnitsUpdated(queuedUnits);
+    }
+
     private void UpdateTimerDisplay()
     {
-        /*float newProgress = unitTimer.Value / unitSpawnDuration;
+        if (queuedUnits == 0)
+        {
+            return;
+        }
+
+        unitTimer += Time.deltaTime;
+
+        float newProgress = unitTimer / unitSpawnDuration;
 
         if (newProgress < unitProgressImage.fillAmount)
         {
@@ -143,7 +181,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         else
         {
             unitProgressImage.fillAmount = Mathf.SmoothDamp(unitProgressImage.fillAmount, newProgress, ref progressImageVelocity, 0.1f);
-        }*/
+        }
     }
     #endregion
 }

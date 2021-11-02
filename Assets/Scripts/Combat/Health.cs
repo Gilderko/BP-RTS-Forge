@@ -66,7 +66,7 @@ public class Health : NetworkBehaviour
     private void ServerUpdateHealth()
     {
         var newMessage = healthPool.Get();
-        newMessage.EntityID = ObjectId;
+        newMessage.EntityID = EntityId;
         newMessage.NewHealthValue = currentHealth;
 
         RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(newMessage);

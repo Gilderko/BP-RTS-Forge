@@ -171,7 +171,13 @@ public class RTSPlayer : NetworkBehaviour
     {
         teamColor = newColor;
 
-        ClientOnColorUpdated(newColor);
+        var message = new SetTeamColorMessage();
+        message.PlayerId = OwnerClientId;
+        message.ColorR = teamColor.r;
+        message.ColorG = teamColor.g;
+        message.ColorB = teamColor.b;
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(message);
     }
 
     public void ServerSetTeamOwner(bool state)
@@ -278,7 +284,7 @@ public class RTSPlayer : NetworkBehaviour
         Building.AuthorityOnBuildingDespawned -= AuthorityHandleBuildingDespawned;
     }
 
-    public void AuthoritySetPlayerOwnership(bool newState)
+    public void ClientSetPlayerOwnsSession(bool newState)
     {
         if (!IsOwner)
         {
@@ -304,6 +310,13 @@ public class RTSPlayer : NetworkBehaviour
 
         cameraStartPosition = newVec;
         cameraTransform.position = new Vector3(newVec.x + cameraStartOffset.x, 21, newVec.z + cameraStartOffset.y);
+    }
+
+    public void ClientSetNewTeamColor(Color newCol)
+    {
+        teamColor = newCol;
+
+        ClientOnColorUpdated(teamColor);
     }
 
     public void ClientSetResources(int newValue)

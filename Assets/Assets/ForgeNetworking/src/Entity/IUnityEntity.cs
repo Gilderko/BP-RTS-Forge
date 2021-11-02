@@ -7,6 +7,7 @@ namespace Forge.Networking.Unity
 
     public interface IUnityEntity
     {
+        public IPlayerSignature OwnerID { get; set; }
         int Id { get; set; }
         int PrefabId { get; set; }
         GameObject OwnerGameObject { get; }
