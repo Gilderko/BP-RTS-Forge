@@ -4,7 +4,7 @@ using Forge.Serialization;
 
 namespace Forge.Networking.Unity.Messages
 {
-    [EngineMessageContract(15, typeof(UpdateHealthMessage))]
+    [EngineMessageContract(31, typeof(UpdateHealthMessage))]
     public class UpdateHealthMessage : ForgeMessage
     {
         public int EntityID { get; set; }

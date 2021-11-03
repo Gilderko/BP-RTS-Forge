@@ -14,12 +14,12 @@ namespace Forge.Networking.Messaging
         {
             Type baseType = typeof(IMessage);
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
+            {                
                 try
                 {
                     var types = asm.GetTypes().Where(t => baseType.IsAssignableFrom(t) && !t.IsInterface);
                     foreach (var t in types)
-                    {
+                    {                        
                         var attrs = (MessageContractAttribute[])t.GetCustomAttributes(typeof(MessageContractAttribute), true);
                         foreach (var a in attrs)
                             Register(a.GetId(), a.GetClassType());

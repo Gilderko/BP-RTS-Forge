@@ -4,7 +4,7 @@ using Forge.Serialization;
 
 namespace Forge.Networking.Unity.Messages
 {
-	[EngineMessageContract(15, typeof(UpdateResourcesMessage))]
+	[EngineMessageContract(32, typeof(UpdateResourcesMessage))]
 	public class UpdateResourcesMessage : ForgeMessage
 	{
 		public int PlayerId { get; set; }

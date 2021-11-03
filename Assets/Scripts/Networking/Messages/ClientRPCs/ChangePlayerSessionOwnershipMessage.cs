@@ -4,7 +4,7 @@ using Forge.Serialization;
 
 namespace Forge.Networking.Unity.Messages
 {
-	[EngineMessageContract(15, typeof(ChangePlayerSessionOwnershipMessage))]
+	[EngineMessageContract(30, typeof(ChangePlayerSessionOwnershipMessage))]
 	public class ChangePlayerSessionOwnershipMessage : ForgeMessage
 	{
 		public int PlayerId { get; set; }
