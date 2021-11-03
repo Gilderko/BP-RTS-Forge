@@ -76,8 +76,7 @@ public class RTSNetworkManager : MonoBehaviour
     {
         Debug.Log("Server start");
         var factory = AbstractFactory.Get<INetworkTypeFactory>();
-        Facade.NetworkMediator = factory.GetNew<INetworkMediator>();
-        ServerSignature = AbstractFactory.Get<IPlayerSignature>();
+        Facade.NetworkMediator = factory.GetNew<INetworkMediator>();        
 
         Facade.NetworkMediator.PlayerRepository.onPlayerAddedSubscription += HandleNewClientConnected;
         Facade.NetworkMediator.PlayerRepository.onPlayerRemovedSubscription += HandleNewClientDisconnected;
@@ -85,14 +84,26 @@ public class RTSNetworkManager : MonoBehaviour
         Facade.NetworkMediator.ChangeEngineProxy(Facade);
         
         Facade.NetworkMediator.StartServer(portNumber, maxPlayers);
+
+        ServerSignature = AbstractFactory.Get<INetworkTypeFactory>().GetNew<IPlayerSignature>();
     }
 
-    private void HandleNewClientDisconnected(INetPlayer player)
+    public void StartClient(string address, ushort portNumber)
+    {
+        var factory = AbstractFactory.Get<INetworkTypeFactory>();
+        Facade.NetworkMediator = factory.GetNew<INetworkMediator>();
+
+        Facade.NetworkMediator.ChangeEngineProxy(Facade);
+
+        Facade.NetworkMediator.StartClient(address, portNumber);
+    }
+
+    private void HandleNewClientConnected(INetPlayer player)
     {
         ServerHandleClientConnected(player);
     }
 
-    private void HandleNewClientConnected(INetPlayer player)
+    private void HandleNewClientDisconnected(INetPlayer player)
     {
         ServerHandleClientDisconnected(player);
     }
@@ -106,7 +117,7 @@ public class RTSNetworkManager : MonoBehaviour
                 SpawnEntityMessage spawnMessage = spawnPool.Get();
                 spawnMessage.Id = ServerGetNewEntityId();
                 spawnMessage.OwnerId = ServerSignature;
-                spawnMessage.PrefabId = gameOverHandler.PrefabId;
+                spawnMessage.PrefabId = gameOverHandler.GetComponent<NetworkEntity>().PrefabId;
 
                 spawnMessage.Position = Vector3.zero;
                 spawnMessage.Rotation = Quaternion.identity;
@@ -136,7 +147,7 @@ public class RTSNetworkManager : MonoBehaviour
                     SpawnEntityMessage baseSpawnMessage = spawnPool.Get();
                     baseSpawnMessage.Id = ServerGetNewEntityId();
                     baseSpawnMessage.OwnerId = player.OwnerSignatureId;
-                    baseSpawnMessage.PrefabId = playerBase.PrefabId;
+                    baseSpawnMessage.PrefabId = playerBase.GetComponent<NetworkEntity>().PrefabId;
 
                     baseSpawnMessage.Position = parentToSpawnPoints.GetChild(index).position;
                     baseSpawnMessage.Rotation = Quaternion.identity;
@@ -168,7 +179,8 @@ public class RTSNetworkManager : MonoBehaviour
         var playerSpawnMessage = new SpawnPlayerObjectMessage();
         playerSpawnMessage.Id = ServerGetNewEntityId();
         playerSpawnMessage.OwnerId = player.Id;
-        playerSpawnMessage.PrefabId = playerPrefab.PrefabId;
+        Debug.Log(playerPrefab.GetComponent<NetworkEntity>().PrefabId);
+        playerSpawnMessage.PrefabId = playerPrefab.GetComponent<NetworkEntity>().PrefabId;
         
         playerSpawnMessage.Position = Vector3.zero;
         playerSpawnMessage.Rotation = Quaternion.identity;
@@ -198,7 +210,7 @@ public class RTSNetworkManager : MonoBehaviour
             var spawnExistingPlayer = new SpawnPlayerObjectMessage();
             spawnExistingPlayer.Id = spawnedPlayer.EntityId;
             spawnExistingPlayer.OwnerId = spawnedPlayer.OwnerSignatureId;
-            spawnExistingPlayer.PrefabId = playerPrefab.PrefabId;
+            spawnExistingPlayer.PrefabId = playerPrefab.GetComponent<NetworkEntity>().PrefabId;
 
             spawnExistingPlayer.Position = Vector3.zero;
             spawnExistingPlayer.Rotation = Quaternion.identity;

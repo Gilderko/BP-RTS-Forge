@@ -11,8 +11,7 @@ namespace Forge.Networking.Unity.Messages
 		public bool IsTeamOwner { get; set; }
 		public float Red { get; set; }
 		public float Green { get; set; }
-		public float Blue { get; set; }
-		
+		public float Blue { get; set; }		
 
 		public override IMessageInterpreter Interpreter => SpawnPlayerObjectInterpreter.Instance;
 

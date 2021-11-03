@@ -113,7 +113,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         var spawnMessage = spawnPool.Get();
         spawnMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
         spawnMessage.OwnerId = OwnerSignatureId;
-        spawnMessage.PrefabId = unitPrefab.PrefabId;
+        spawnMessage.PrefabId = unitPrefab.GetComponent<NetworkEntity>().PrefabId;
 
         spawnMessage.Position = spawnLocation.position;
         spawnMessage.Rotation = Quaternion.identity;

@@ -1,3 +1,4 @@
+using Forge.Networking.Unity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -56,7 +57,7 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
         {
             if (hasHit)
             {
-                player.CmdTryPlaceBuildingServerRpc(representedBuilding.PrefabId, hit.point);
+                player.CmdTryPlaceBuildingServerRpc(representedBuilding.GetComponent<NetworkEntity>().PrefabId, hit.point);
             }
 
             Destroy(buildingPreviewInstance);

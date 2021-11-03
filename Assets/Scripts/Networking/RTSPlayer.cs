@@ -219,7 +219,7 @@ public class RTSPlayer : NetworkBehaviour
 
     public void CmdTryPlaceBuildingServerRpc(int buildingID, Vector3 positionToSpawn)
     {
-        Building buildingToPlace = buildings.First(build => build.PrefabId == buildingID);
+        Building buildingToPlace = buildings.First(build => build.GetComponent<NetworkEntity>().PrefabId == buildingID);
 
         if (buildingToPlace == null)
         {
@@ -241,7 +241,7 @@ public class RTSPlayer : NetworkBehaviour
         var spawnBuildMessage = spawnPool.Get();
         spawnBuildMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
         spawnBuildMessage.OwnerId = OwnerSignatureId;
-        spawnBuildMessage.PrefabId = buildingToPlace.PrefabId;
+        spawnBuildMessage.PrefabId = buildingToPlace.GetComponent<NetworkEntity>().PrefabId;
 
         spawnBuildMessage.Position = positionToSpawn;
         spawnBuildMessage.Rotation = Quaternion.identity;
@@ -328,7 +328,7 @@ public class RTSPlayer : NetworkBehaviour
     {
         teamColor = newCol;
 
-        ClientOnColorUpdated(teamColor);
+        ClientOnColorUpdated?.Invoke(teamColor);
     }
 
     public void ClientSetResources(int newValue)

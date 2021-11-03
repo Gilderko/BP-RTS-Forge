@@ -62,4 +62,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sceneToLoad: 
   _sceneToDisconnectTo: 
-  _prefabManager: {fileID: 0}
+  _prefabManager: {fileID: 11400000, guid: 5a4a7fcbe6184634ab9bc317624a4afe, type: 2}

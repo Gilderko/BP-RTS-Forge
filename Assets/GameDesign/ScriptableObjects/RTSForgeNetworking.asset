@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9138934cd7019b4197256e094cf7bef, type: 3}
+  m_Name: RTSForgeNetworking
+  m_EditorClassIdentifier: 
+  _prefabs:
+  - {fileID: 8378646500975486587, guid: 74be5843e39fcd5449f244d1618ef674, type: 3}
+  - {fileID: 7122370471052342304, guid: 3c03a7416dbd1fc4d9d0410f9875ba79, type: 3}
+  - {fileID: 4829673629027058523, guid: 5f506acded725b04ea3c310993d08524, type: 3}
+  - {fileID: 8378646500975486587, guid: 15e90b0019d52b34d98aa4678a1a18a6, type: 3}
+  - {fileID: 7560453398671614041, guid: 1609d403e2ec74a4d93883e0749437f2, type: 3}
+  - {fileID: 1453673423075394565, guid: a72e82f852b74654b81d61cd593ecf4f, type: 3}
+  - {fileID: 2722373554487369645, guid: d69c0fe257cc23f4eb1b8e4dc975ac69, type: 3}
+  - {fileID: 6996646418289871390, guid: 341042a0a3e286a498a62993685198a2, type: 3}
+  - {fileID: 1943545440380194538, guid: 51225ebfc2af578448f3b05f4bdfd2ec, type: 3}

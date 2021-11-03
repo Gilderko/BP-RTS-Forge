@@ -6,9 +6,8 @@ public class JoinLobbyMenu : MonoBehaviour
 {
     [SerializeField] private GameObject landingPagePanel;
     [SerializeField] private TMP_InputField addressInput;
+    [SerializeField] private TMP_InputField portInput;
     [SerializeField] private Button joinButton;
-
-    [SerializeField] private ushort portToStart;
 
 
     private void OnEnable()
@@ -23,12 +22,11 @@ public class JoinLobbyMenu : MonoBehaviour
         RTSNetworkManager.ClientOnDisconnected -= HandleClientDisconnected;
     }
 
-
     public void JoinCallback()
     {
         string address = addressInput.text;
 
-        RTSNetworkManager.Instance.Facade.NetworkMediator.StartClient(address, portToStart);
+        RTSNetworkManager.Instance.StartClient(address, ushort.Parse(portInput.text));
 
         joinButton.interactable = false;
     }

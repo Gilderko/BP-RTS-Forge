@@ -17,6 +17,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		{
 			var castedMessage = (SpawnPlayerObjectMessage)message;
 			IEngineFacade engine = (IEngineFacade)netMediator.EngineProxy;
+			Debug.Log(castedMessage.PrefabId);
 			var playerObject = EntitySpawner.SpawnEntityFromMessage(engine, castedMessage).OwnerGameObject.GetComponent<RTSPlayer>();
 			playerObject.ClientSetNewTeamColor(new Color(castedMessage.Red,castedMessage.Green,castedMessage.Blue));
 			playerObject.ClientSetNewPlayerName(castedMessage.PlayerName);

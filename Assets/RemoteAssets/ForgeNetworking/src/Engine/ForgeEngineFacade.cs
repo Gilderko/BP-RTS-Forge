@@ -30,7 +30,7 @@ namespace Forge.Networking.Unity
         private EndPoint _serverEndpoint => _selfSocket.ManagedSocket.EndPoint;
 
         [SerializeField]
-        private PrefabManagerScriptableObject _prefabManager = null;
+        private PrefabManager _prefabManager = null;
         public IPrefabManager PrefabManager => _prefabManager;
 
         public IMessageRepository NewClientMessageBuffer { get; private set; }
