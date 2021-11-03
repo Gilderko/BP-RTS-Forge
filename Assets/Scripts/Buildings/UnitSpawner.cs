@@ -14,7 +14,6 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     [SerializeField] private TextMeshProUGUI remainingUnitsText = null;
     [SerializeField] private Image unitProgressImage = null;
     [SerializeField] private int maxUnitQue = 5;
-    [SerializeField] private float spawnMoveRange = 7;
     [SerializeField] private float unitSpawnDuration = 5f;
 
     // Internal references
@@ -114,7 +113,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         var spawnMessage = spawnPool.Get();
         spawnMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
         spawnMessage.OwnerId = OwnerSignatureId;
-        spawnMessage.PrefabId = unitPrefab.GetComponent<NetworkEntity>().PrefabId;
+        spawnMessage.PrefabId = unitPrefab.PrefabId;
 
         spawnMessage.Position = spawnLocation.position;
         spawnMessage.Rotation = Quaternion.identity;

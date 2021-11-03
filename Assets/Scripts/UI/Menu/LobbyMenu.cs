@@ -55,16 +55,16 @@ public class LobbyMenu : MonoBehaviour
 
     public void LeaveLobby()
     {
-        /*if (NetworkManager.Singleton.IsServer)
+        if (RTSNetworkManager.Instance.IsServer)
         {
-            NetworkManager.Singleton.StopServer();
+            RTSNetworkManager.Instance.Facade.ShutDown();
         }
         else
         {
-            NetworkManager.Singleton.StopClient();
+            RTSNetworkManager.Instance.Facade.ShutDown();
 
             SceneManager.LoadScene(0);
-        }*/
+        }
     }
 
     public void StartGame()

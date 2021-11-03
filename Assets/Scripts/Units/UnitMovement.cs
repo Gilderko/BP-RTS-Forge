@@ -29,33 +29,9 @@ public class UnitMovement : NetworkBehaviour
         agent.ResetPath();
     }
 
-    #endregion
-
-
-
-    public void MoveClient(Vector3 position)
-    {
-        if (!IsOwner)
-        {
-            return;
-        }
-
-        targeter.ClearTarget();
-
-        NavMeshHit hit;
-        if (!NavMesh.SamplePosition(position, out hit, 1f, NavMesh.AllAreas))
-        {
-
-            return;
-        }
-
-        agent.SetDestination(position);
-    }
-
-
     private void Update()
     {
-        if (IsClient)
+        if (IsServer)
         {
             Targetable target = targeter.GetTarget();
 
@@ -81,4 +57,25 @@ public class UnitMovement : NetworkBehaviour
             }
         }
     }
+
+    public void CmdMoveServerRpc(Vector3 position)
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+
+        targeter.ClearTarget();
+
+        NavMeshHit hit;
+        if (!NavMesh.SamplePosition(position, out hit, 1f, NavMesh.AllAreas))
+        {
+
+            return;
+        }
+
+        agent.SetDestination(position);
+    }
+
+    #endregion
 }

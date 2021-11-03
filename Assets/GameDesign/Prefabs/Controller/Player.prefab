@@ -52,9 +52,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5231475737836859972}
-  - component: {fileID: 2561627729595253783}
   - component: {fileID: -1515825777145437709}
   - component: {fileID: 7489960712119259178}
+  - component: {fileID: 7560453398671614041}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -77,23 +77,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2561627729595253783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5231475737836859974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 1897319656204293034
-  PrefabHashGenerator: Player
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0
 --- !u!114 &-1515825777145437709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,6 +124,21 @@ MonoBehaviour:
   screenXLimits: {x: -150, y: 150}
   screenZLimits: {x: -170, y: 120}
   screenYLimits: {x: 15, y: 45}
+--- !u!114 &7560453398671614041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5231475737836859974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824b458f51d3c2746b35a20cb80e161c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sceneIdentifier: b6995fe1-23a4-4b23-9291-bd599c86f010
+  _sceneIndex: 0
+  _prefabId: 0
 --- !u!1 &6700924699381765725
 GameObject:
   m_ObjectHideFlags: 0

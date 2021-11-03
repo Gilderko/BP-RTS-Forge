@@ -10,7 +10,6 @@ public class Unit : NetworkBehaviour
 
     [SerializeField] private UnityEvent onSelected = null;
     [SerializeField] private UnityEvent onDeselected = null;
-    [SerializeField] private int unitId = 0;
 
     [SerializeField] private int resourceCost = 5;
 
@@ -22,7 +21,6 @@ public class Unit : NetworkBehaviour
 
     public void Start()
     {
-
         if (IsServer)
         {
             ServerOnUnitSpawned?.Invoke(this);
@@ -33,12 +31,10 @@ public class Unit : NetworkBehaviour
         {
             AuthorityOnUnitSpawned?.Invoke(this);
         }
-
     }
 
     private void OnDestroy()
     {
-
         if (IsServer)
         {
             health.ServerOnDie -= ServerHandleDie;
@@ -49,7 +45,6 @@ public class Unit : NetworkBehaviour
         {
             AuthorityOnUnitDespawned?.Invoke(this);
         }
-
     }
 
     #region Server
@@ -99,9 +94,4 @@ public class Unit : NetworkBehaviour
     {
         return resourceCost;
     }
-
-    /*public int GetPrefabId()
-    {
-        return prefabId;
-    }*/
 }

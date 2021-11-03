@@ -8,6 +8,8 @@ public class JoinLobbyMenu : MonoBehaviour
     [SerializeField] private TMP_InputField addressInput;
     [SerializeField] private Button joinButton;
 
+    [SerializeField] private ushort portToStart;
+
 
     private void OnEnable()
     {
@@ -24,12 +26,11 @@ public class JoinLobbyMenu : MonoBehaviour
 
     public void JoinCallback()
     {
-        /*string address = addressInput.text;
+        string address = addressInput.text;
 
-        NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = address;
-        NetworkManager.Singleton.StartClient();
+        RTSNetworkManager.Instance.Facade.NetworkMediator.StartClient(address, portToStart);
 
-        joinButton.interactable = false;*/
+        joinButton.interactable = false;
     }
 
     private void HandleClientConnected()

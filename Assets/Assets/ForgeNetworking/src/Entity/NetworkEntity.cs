@@ -13,6 +13,8 @@ namespace Forge.Networking.Unity
         [SerializeField] private string _sceneIdentifier = null;
         [SerializeField, HideInInspector] private int _sceneIndex = 0;
 
+        [SerializeField] private int _prefabId;
+
         public IPlayerSignature OwnerID { get; set; }
         public int Id { get; set; }
         public int PrefabId { get; set; }

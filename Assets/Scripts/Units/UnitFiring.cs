@@ -1,22 +1,26 @@
+using Forge.Networking.Messaging;
+using Forge.Networking.Unity;
+using Forge.Networking.Unity.Messages;
 using UnityEngine;
 
 public class UnitFiring : NetworkBehaviour
 {
     [SerializeField] private Targeter targeter = null;
-    [SerializeField] private GameObject projectilePrefab = null;
+    [SerializeField] private NetworkEntity projectilePrefab = null;
     [SerializeField] private Transform projectileSpawnPoint = null;
     [SerializeField] private float fireRange = 5f;
     [SerializeField] private float fireRate = 1f;
     [SerializeField] private float rotationSpeed = 20f;
 
     private float lastFireTime;
+    private MessagePool<SpawnEntityMessage> spawnPool = new MessagePool<SpawnEntityMessage>();
 
     #region Server
 
 
     private void Update()
     {
-        /*if (IsServer)
+        if (IsServer)
         {
             Targetable target = targeter.GetTarget();
 
@@ -38,15 +42,23 @@ public class UnitFiring : NetworkBehaviour
             {
                 Quaternion projectRotation = Quaternion.LookRotation(target.GetAimAtPoint().position - projectileSpawnPoint.position);
 
-                GameObject projectileInstance = Instantiate(projectilePrefab, projectileSpawnPoint.position, projectRotation);
+                var projectileSpawnMessage = spawnPool.Get();
+                projectileSpawnMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
+                projectileSpawnMessage.OwnerId = OwnerSignatureId;
+                projectileSpawnMessage.PrefabId = projectilePrefab.PrefabId;
 
-                projectileInstance.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+                projectileSpawnMessage.Position = projectileSpawnPoint.position;
+                projectileSpawnMessage.Rotation = projectRotation;
+                projectileSpawnMessage.Scale = Vector3.one;
+
+                EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, projectileSpawnMessage);
+
+                RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(projectileSpawnMessage);
 
                 lastFireTime = Time.time;
             }
-        }*/
+        }
     }
-
 
     private bool CanFireAtTarget()
     {

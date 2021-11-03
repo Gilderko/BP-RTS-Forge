@@ -1,4 +1,6 @@
+using Forge.Networking.Messaging;
 using Forge.Networking.Unity;
+using Forge.Networking.Unity.Messages;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +10,10 @@ public class UnitCommandGiver : MonoBehaviour
     [SerializeField] private LayerMask layerMask = new LayerMask();
 
     private Camera mainCamera;
+
+    private MessagePool<SetNewTargetMessage> newTargetPool = new MessagePool<SetNewTargetMessage>();
+    private MessagePool<SetNewMovePointMessage> newMovePool = new MessagePool<SetNewMovePointMessage>();
+    
 
     private void Start()
     {
@@ -62,8 +68,12 @@ public class UnitCommandGiver : MonoBehaviour
     {
         foreach (Unit unit in unitSelectionHandler.GetSelectedUnits())
         {
-            NetworkEntity targetNetworkObj = target.GetComponent<NetworkEntity>();
-            unit.GetTargeter().CmdSetTargetServerRpc(targetNetworkObj.Id);
+            var netTargetMessage = newTargetPool.Get();
+            netTargetMessage.EntityId = unit.EntityId;
+
+            netTargetMessage.TargetEntityId = target.EntityId;
+
+            RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(netTargetMessage);
         }
     }
 
@@ -71,7 +81,14 @@ public class UnitCommandGiver : MonoBehaviour
     {
         foreach (Unit unit in unitSelectionHandler.GetSelectedUnits())
         {
-            unit.GetUnitMovement().MoveClient(point);
+            var newMovePointMessage = newMovePool.Get();
+            newMovePointMessage.EntityId = unit.EntityId;
+
+            newMovePointMessage.PosX = point.x;
+            newMovePointMessage.PosY = point.y;
+            newMovePointMessage.PosZ = point.z;
+
+            RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(newMovePointMessage);
         }
     }
 }

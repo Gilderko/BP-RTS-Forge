@@ -56,7 +56,7 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
         {
             if (hasHit)
             {
-                player.CmdTryPlaceBuildingServerRpc(representedBuilding.GetID(), hit.point);
+                player.CmdTryPlaceBuildingServerRpc(representedBuilding.PrefabId, hit.point);
             }
 
             Destroy(buildingPreviewInstance);

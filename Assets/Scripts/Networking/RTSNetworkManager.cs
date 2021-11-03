@@ -17,7 +17,7 @@ public class RTSNetworkManager : MonoBehaviour
     public bool IsClient { get => !Facade.IsServer; }
 
     [SerializeField] private RTSPlayer playerPrefab = null;
-    [SerializeField] private GameObject playerBase = null;
+    [SerializeField] private UnitBase playerBase = null;
     [SerializeField] private GameOverHandler gameOverHandler = null;
     [SerializeField] private ForgeEngineFacade forgeEngineFacade = null;       
 
@@ -52,7 +52,6 @@ public class RTSNetworkManager : MonoBehaviour
 
     private MessagePool<SpawnEntityMessage> spawnPool = new MessagePool<SpawnEntityMessage>();
 
-    private int nextEntityId = 0;
     private bool isGameInProgress = false;
 
     // Server variables
@@ -107,7 +106,7 @@ public class RTSNetworkManager : MonoBehaviour
                 SpawnEntityMessage spawnMessage = spawnPool.Get();
                 spawnMessage.Id = ServerGetNewEntityId();
                 spawnMessage.OwnerId = ServerSignature;
-                spawnMessage.PrefabId = gameOverHandler.GetComponent<NetworkEntity>().PrefabId;
+                spawnMessage.PrefabId = gameOverHandler.PrefabId;
 
                 spawnMessage.Position = Vector3.zero;
                 spawnMessage.Rotation = Quaternion.identity;
@@ -137,7 +136,7 @@ public class RTSNetworkManager : MonoBehaviour
                     SpawnEntityMessage baseSpawnMessage = spawnPool.Get();
                     baseSpawnMessage.Id = ServerGetNewEntityId();
                     baseSpawnMessage.OwnerId = player.OwnerSignatureId;
-                    baseSpawnMessage.PrefabId = playerBase.GetComponent<NetworkEntity>().PrefabId;
+                    baseSpawnMessage.PrefabId = playerBase.PrefabId;
 
                     baseSpawnMessage.Position = parentToSpawnPoints.GetChild(index).position;
                     baseSpawnMessage.Rotation = Quaternion.identity;
@@ -157,8 +156,8 @@ public class RTSNetworkManager : MonoBehaviour
     {
         if (isGameInProgress)
         {
-            Facade.NetworkMediator.PlayerRepository.
-            //DisconnectClient(obj);
+            // Here I need to find a way to disconnect a person
+            
             return;
         }
 
@@ -169,7 +168,7 @@ public class RTSNetworkManager : MonoBehaviour
         var playerSpawnMessage = new SpawnPlayerObjectMessage();
         playerSpawnMessage.Id = ServerGetNewEntityId();
         playerSpawnMessage.OwnerId = player.Id;
-        playerSpawnMessage.PrefabId = playerPrefab.GetComponent<NetworkEntity>().PrefabId;
+        playerSpawnMessage.PrefabId = playerPrefab.PrefabId;
         
         playerSpawnMessage.Position = Vector3.zero;
         playerSpawnMessage.Rotation = Quaternion.identity;
@@ -191,10 +190,15 @@ public class RTSNetworkManager : MonoBehaviour
 
         foreach (var spawnedPlayer in Players)
         {
+            if (spawnedPlayer.OwnerSignatureId == player.Id)
+            {
+                continue;
+            }
+
             var spawnExistingPlayer = new SpawnPlayerObjectMessage();
             spawnExistingPlayer.Id = spawnedPlayer.EntityId;
             spawnExistingPlayer.OwnerId = spawnedPlayer.OwnerSignatureId;
-            spawnExistingPlayer.PrefabId = playerPrefab.GetComponent<NetworkEntity>().PrefabId;
+            spawnExistingPlayer.PrefabId = playerPrefab.PrefabId;
 
             spawnExistingPlayer.Position = Vector3.zero;
             spawnExistingPlayer.Rotation = Quaternion.identity;
@@ -255,9 +259,7 @@ public class RTSNetworkManager : MonoBehaviour
 
     public int ServerGetNewEntityId()
     {
-        int toReturn = nextEntityId;
-        nextEntityId++;
-        return toReturn;
+        return Facade.GetNewEntityId();
     }
 
     #endregion

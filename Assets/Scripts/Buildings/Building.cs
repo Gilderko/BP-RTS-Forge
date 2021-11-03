@@ -4,7 +4,6 @@ using UnityEngine;
 public class Building : NetworkBehaviour
 {
     [SerializeField] private Sprite icon = null;
-    [SerializeField] private int buildingID = -1;
     [SerializeField] private int price = 100;
     [SerializeField] private GameObject buildingPreview = null;
 
@@ -52,18 +51,8 @@ public class Building : NetworkBehaviour
         return icon;
     }
 
-    public int GetID()
-    {
-        return buildingID;
-    }
-
     public int GetPrice()
     {
         return price;
     }
-
-    /*public int GetPrefabId()
-    {
-        return prefabId;
-    }*/
 }

@@ -23,6 +23,8 @@ public class NetworkBehaviour : MonoBehaviour
 
     public int EntityId { get => _netEntity.Id; }
 
+    public int PrefabId { get => _netEntity.PrefabId; }
+
     public void SetEntity(NetworkEntity networkEntity)
     {
         _netEntity = networkEntity;

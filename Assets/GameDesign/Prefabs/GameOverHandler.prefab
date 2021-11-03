@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6356622094155224297}
-  - component: {fileID: 336253648669630213}
   - component: {fileID: 1273161702178869714}
+  - component: {fileID: 1943545440380194538}
   m_Layer: 0
   m_Name: GameOverHandler
   m_TagString: Untagged
@@ -32,23 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &336253648669630213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4667478445363654578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 16777844017637474499
-  PrefabHashGenerator: GameOverHandler
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0
 --- !u!114 &1273161702178869714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,3 +44,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ba26a3fb360d76449a0777ec98fcd44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1943545440380194538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4667478445363654578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824b458f51d3c2746b35a20cb80e161c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sceneIdentifier: ede1194f-f6e6-4c04-a831-6f52c64d9ddb
+  _sceneIndex: 0
+  _prefabId: 7

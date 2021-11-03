@@ -19,8 +19,6 @@ public class UnitProjectile : NetworkBehaviour
 
     #region Server
 
-
-
     private void OnTriggerEnter(Collider other)
     {
         if (IsServer)

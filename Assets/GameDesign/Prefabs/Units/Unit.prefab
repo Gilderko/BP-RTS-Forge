@@ -39,8 +39,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5859314376764323192}
-  - component: {fileID: 7142784128122669826}
-  - component: {fileID: 1805512731702119674}
   - component: {fileID: -3249203769088871756}
   - component: {fileID: 5206992608228372037}
   - component: {fileID: 4828621895206613820}
@@ -51,6 +49,7 @@ GameObject:
   - component: {fileID: 6722542049949842946}
   - component: {fileID: 4589002775630475943}
   - component: {fileID: 5237917325144010164}
+  - component: {fileID: 1655600001376980371}
   m_Layer: 8
   m_Name: Unit
   m_TagString: Untagged
@@ -77,71 +76,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7142784128122669826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5859314376764323193}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 7739986256541069135
-  PrefabHashGenerator: Unit
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0
---- !u!114 &1805512731702119674
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5859314376764323193}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FixedSendsPerSecond: 10
-  AssumeSyncedSends: 1
-  InterpolatePosition: 1
-  SnapDistance: 10
-  InterpolateServer: 1
-  MinMeters: 0.15
-  MinDegrees: 1.5
-  ExtrapolatePosition: 0
-  MaxSendsToExtrapolate: 5
-  Channel: 
-  EnableRange: 0
-  EnableNonProvokedResendChecks: 0
-  DistanceSendrate:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 20
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 500
-      value: 20
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!114 &-3249203769088871756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,7 +211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targeter: {fileID: 3100959912085589266}
-  projectilePrefab: {fileID: 4482481897922476592, guid: a72e82f852b74654b81d61cd593ecf4f, type: 3}
+  projectilePrefab: {fileID: 0}
   projectileSpawnPoint: {fileID: 1418922978574565057}
   fireRange: 5
   fireRate: 1
@@ -324,6 +258,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colorRenderers:
   - {fileID: 2687890896324732181}
+--- !u!114 &1655600001376980371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5859314376764323193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824b458f51d3c2746b35a20cb80e161c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sceneIdentifier: bb479322-2a3d-4fea-931f-832e240b9e24
+  _sceneIndex: 0
+  _prefabId: -3
 --- !u!1 &6212448975436108531
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,8 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject landingPagePanel = null;
 
+    [SerializeField] private int maxPlayers = 10;
+    [SerializeField] private ushort serverPort;
 
 
 
@@ -13,6 +15,6 @@ public class MainMenu : MonoBehaviour
         Debug.Log("Started server");
         landingPagePanel.SetActive(false);
 
-        //NetworkManager.Singleton.StartServer();
+        RTSNetworkManager.Instance.Facade.NetworkMediator.StartServer(serverPort, maxPlayers);
     }
 }

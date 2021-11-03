@@ -1,5 +1,6 @@
 using Forge.Networking.Messaging;
 using Forge.Networking.Players;
+using Forge.Networking.Unity;
 using Forge.Networking.Unity.Messages;
 using System;
 using System.Collections.Generic;
@@ -31,10 +32,12 @@ public class RTSPlayer : NetworkBehaviour
 
     private INetPlayer forgePlayer;
 
+    private MessagePool<UpdateResourcesMessage> resourcesPool = new MessagePool<UpdateResourcesMessage>();
+    private MessagePool<SpawnEntityMessage> spawnPool = new MessagePool<SpawnEntityMessage>();
+
     // Synced values
 
-    private int resources = 0;
-    private MessagePool<UpdateResourcesMessage> resourcesPool = new MessagePool<UpdateResourcesMessage>();
+    private int resources = 0;    
 
     private bool isPartyOwner = false;
 
@@ -216,7 +219,7 @@ public class RTSPlayer : NetworkBehaviour
 
     public void CmdTryPlaceBuildingServerRpc(int buildingID, Vector3 positionToSpawn)
     {
-        Building buildingToPlace = buildings.First(build => build.GetID() == buildingID);
+        Building buildingToPlace = buildings.First(build => build.PrefabId == buildingID);
 
         if (buildingToPlace == null)
         {
@@ -235,9 +238,18 @@ public class RTSPlayer : NetworkBehaviour
             return;
         }
 
-        GameObject building = Instantiate(buildingToPlace.gameObject, positionToSpawn, Quaternion.identity);
+        var spawnBuildMessage = spawnPool.Get();
+        spawnBuildMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
+        spawnBuildMessage.OwnerId = OwnerSignatureId;
+        spawnBuildMessage.PrefabId = buildingToPlace.PrefabId;
 
-        //building.GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+        spawnBuildMessage.Position = positionToSpawn;
+        spawnBuildMessage.Rotation = Quaternion.identity;
+        spawnBuildMessage.Scale = Vector3.one;
+
+        EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, spawnBuildMessage);
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
 
         ServerAddResources(-buildingToPlace.GetPrice());
     }
