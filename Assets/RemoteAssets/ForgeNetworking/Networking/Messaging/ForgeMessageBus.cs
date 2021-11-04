@@ -53,8 +53,8 @@ namespace Forge.Networking.Messaging
 
         public void SendMessage(IMessage message, ISocket sender, EndPoint receiver)
         {
-            // TODO:  Possibly use the message interface to get the size needed for this
-            BMSByte buffer = _bufferPool.Get(128);
+            // TODO:  Possibly use the message interface to get the size needed for this            
+            BMSByte buffer = _bufferPool.Get(1024);
             ForgeSerializer.Instance.Serialize(GetMessageCode(message), buffer);
             if (message.Receipt != null)
                 ForgeSerializer.Instance.Serialize(message.Receipt, buffer);
@@ -69,7 +69,7 @@ namespace Forge.Networking.Messaging
 
         public IMessageReceiptSignature SendReliableMessage(IMessage message, ISocket sender, EndPoint receiver)
         {
-            message.Receipt = AbstractFactory.Get<INetworkTypeFactory>().GetNew<IMessageReceiptSignature>();
+            message.Receipt = AbstractFactory.Get<INetworkTypeFactory>().GetNew<IMessageReceiptSignature>();            
             SendMessage(message, sender, receiver);
             _messageRepeater.AddMessageToRepeat(message, receiver);
             return message.Receipt;
@@ -83,7 +83,7 @@ namespace Forge.Networking.Messaging
             {
                 try
                 {
-                    var m = (IMessage)ForgeMessageCodes.Instantiate(constructor.MessageBuffer.GetBasicType<int>());
+                    var m = (IMessage)ForgeMessageCodes.Instantiate(constructor.MessageBuffer.GetBasicType<int>());                    
                     ProcessMessageSignature(readingSocket, messageSender, constructor.MessageBuffer, m);
 
                     if (m.Receipt != null)
@@ -118,12 +118,16 @@ namespace Forge.Networking.Messaging
             var s = (SocketContainerSynchronizationReadData)state;
 
             if (ShouldInterpret(s))
+            {
                 s.Interpreter.Interpret(_networkMediator, s.Sender, s.Message);
-        }
+            }
+        }                
 
         private bool ShouldInterpret(SocketContainerSynchronizationReadData readData)
         {
-            return (_networkMediator.IsClient && readData.Interpreter.ValidOnClient) || (_networkMediator.IsServer && readData.Interpreter.ValidOnServer);
+            // Check for id in hashset
+            bool wasProcessed = _networkMediator.HandleMessageIsInIdCheck(readData.Message.MessageInstanceId);
+            return (!wasProcessed) && ((_networkMediator.IsClient && readData.Interpreter.ValidOnClient) || (_networkMediator.IsServer && readData.Interpreter.ValidOnServer));
         }
 
         private void ProcessMessageSignature(ISocket readingSocket, EndPoint messageSender, BMSByte buffer, IMessage m)

@@ -13,11 +13,15 @@ namespace Forge.Networking.Unity.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
+            base.Deserialize(buffer);
+
             MapName = ForgeSerializer.Instance.Deserialize<string>(buffer);
         }
 
         public override void Serialize(BMSByte buffer)
         {
+            base.Serialize(buffer);
+
             ForgeSerializer.Instance.Serialize(MapName, buffer);
         }
     }

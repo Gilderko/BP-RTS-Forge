@@ -15,11 +15,15 @@ namespace Forge.ServerRegistry.Messaging.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
+            base.Deserialize(buffer);
+
             Entries = ForgeSerializer.Instance.Deserialize<ServerListingEntry[]>(buffer);
         }
 
         public override void Serialize(BMSByte buffer)
         {
+            base.Serialize(buffer);
+
             ForgeSerializer.Instance.Serialize(Entries, buffer);
         }
     }

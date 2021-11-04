@@ -24,5 +24,7 @@ namespace Forge.Networking
         void SendReliableMessage(IMessage message);
         void SendReliableMessage(IMessage message, INetPlayer player);
         void SendReliableMessage(IMessage message, EndPoint endpoint);
+        long GetMessageId();
+        public bool HandleMessageIsInIdCheck(long value);
     }
 }

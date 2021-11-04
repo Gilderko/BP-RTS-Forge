@@ -41,18 +41,6 @@ public class RTSNetworkManager : MonoBehaviour
         }
     }
 
-    private static ulong MessageIdCounter = 0;
-    private static readonly object counterLock = new object();
-
-    public ulong GetMessageId()
-    {
-        lock (counterLock)
-        {
-            MessageIdCounter++;
-            return MessageIdCounter;
-        }        
-    }
-
     // Singleton pattern
 
     // Client variables
@@ -127,7 +115,7 @@ public class RTSNetworkManager : MonoBehaviour
 
     private void HandleNewClientConnected(INetPlayer player)
     {
-        ServerHandleClientConnected(player);
+        Debug.Log($"New client connected with ID: {player.Id}");
     }
 
     private void HandleNewClientDisconnected(INetPlayer player)
@@ -139,11 +127,8 @@ public class RTSNetworkManager : MonoBehaviour
     {
         if (IsServer)
         {
-            Debug.Log("Scene changed on server");
-            Debug.Log(SceneManager.GetActiveScene().name);
             if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map"))
             {
-                Debug.Log("Going to spawn stuff");
                 SpawnEntityMessage spawnMessage = spawnPool.Get();
                 spawnMessage.Id = ServerGetNewEntityId();
                 spawnMessage.OwnerId = gameInstanceOwner;
@@ -193,8 +178,8 @@ public class RTSNetworkManager : MonoBehaviour
         }
     }
 
-    private void ServerHandleClientConnected(INetPlayer player)
-    {
+    public void ServerHandleClientConnected(IPlayerSignature player)
+    {        
         if (isGameInProgress)
         {
             // Here I need to find a way to disconnect a person            
@@ -205,7 +190,7 @@ public class RTSNetworkManager : MonoBehaviour
         // set its values as name color and owner
         var playerSpawnMessage = new SpawnPlayerObjectMessage();
         playerSpawnMessage.Id = ServerGetNewEntityId();
-        playerSpawnMessage.OwnerId = player.Id;
+        playerSpawnMessage.OwnerId = player;
         playerSpawnMessage.PrefabId = playerPrefab.GetComponent<NetworkEntity>().PrefabId;
 
         playerSpawnMessage.Position = Vector3.zero;
@@ -229,9 +214,8 @@ public class RTSNetworkManager : MonoBehaviour
 
         foreach (var spawnedPlayer in Players)
         {
-            if (spawnedPlayer.OwnerSignatureId == player.Id)
+            if (spawnedPlayer.OwnerSignatureId.Equals(player))
             {
-                Debug.Log("Not sending myself again");
                 continue;
             }
 
@@ -251,9 +235,10 @@ public class RTSNetworkManager : MonoBehaviour
             var playerColor = spawnedPlayer.GetTeamColor();
             spawnExistingPlayer.Red = playerColor.r;
             spawnExistingPlayer.Green = playerColor.g;
-            spawnExistingPlayer.Blue = playerColor.b;            
+            spawnExistingPlayer.Blue = playerColor.b;
 
-            Facade.NetworkMediator.SendReliableMessage(spawnExistingPlayer, player);
+
+            Facade.NetworkMediator.SendReliableMessage(spawnExistingPlayer, Facade.NetworkMediator.PlayerRepository.GetPlayer(player));
         }
     }
 
@@ -279,7 +264,7 @@ public class RTSNetworkManager : MonoBehaviour
 
     private void ServerHandleClientDisconnected(INetPlayer play)
     {
-        Players.RemoveAll(player => player.OwnerSignatureId == play.Id);
+        Players.RemoveAll(player => player.OwnerSignatureId.Equals(play.Id));
     }
 
     public void ClientHandleClientDisconnected(int obj)

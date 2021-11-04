@@ -3,6 +3,8 @@ using Forge.Factory;
 using Forge.Networking.Messaging;
 using Forge.Networking.Players;
 using Forge.Networking.Sockets;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 
@@ -17,6 +19,47 @@ namespace Forge.Networking
         public ISocketFacade SocketFacade { get; private set; }
         public bool IsClient => SocketFacade is ISocketClientFacade;
         public bool IsServer => SocketFacade is ISocketServerFacade;
+
+        // Message counter
+
+        private long MessageIdCounter = 1;
+        private readonly object counterLock = new object();
+
+        public long GetMessageId()
+        {
+            lock (counterLock)
+            {                
+                MessageIdCounter++;
+                return MessageIdCounter;
+            }
+        }
+
+        private HashSet<long> BagOfUsedIds = new HashSet<long>();
+        private readonly object handleLock = new object();
+
+        public bool HandleMessageIsInIdCheck(long lookedValue)
+        {
+            if (lookedValue <= 0)
+            {
+                return false;
+            }
+
+            lock (handleLock)
+            { 
+                bool isIn = BagOfUsedIds.Contains(lookedValue);
+                if (isIn)
+                {
+                    return true;
+                }
+                else
+                {
+                    BagOfUsedIds.Add(lookedValue);
+                    return false;
+                }
+            }
+        }
+
+        // Message counter
 
         private readonly IPlayerTimeoutBridge _timeoutBridge;
 
@@ -60,7 +103,7 @@ namespace Forge.Networking
         }
 
         public void SendMessage(IMessage message)
-        {
+        {            
             if (SocketFacade is ISocketServerFacade)
             {
                 var itr = PlayerRepository.GetEnumerator();
@@ -88,12 +131,14 @@ namespace Forge.Networking
         {
             if (SocketFacade is ISocketServerFacade)
             {
+                message.MessageInstanceId = GetMessageId();
                 var itr = PlayerRepository.GetEnumerator();
                 while (itr.MoveNext())
                 {
                     if (itr.Current != null)
-                        Debug.Log("New message sent to player");
+                    {
                         MessageBus.SendReliableMessage(message, SocketFacade.ManagedSocket, itr.Current.EndPoint);
+                    }                        
                 }
             }
             else
@@ -102,11 +147,13 @@ namespace Forge.Networking
 
         public void SendReliableMessage(IMessage message, INetPlayer player)
         {
+            message.MessageInstanceId = GetMessageId();
             MessageBus.SendMessage(message, SocketFacade.ManagedSocket, player.EndPoint);
         }
 
         public void SendReliableMessage(IMessage message, EndPoint endpoint)
         {
+            message.MessageInstanceId = GetMessageId();
             MessageBus.SendMessage(message, SocketFacade.ManagedSocket, endpoint);
         }
     }

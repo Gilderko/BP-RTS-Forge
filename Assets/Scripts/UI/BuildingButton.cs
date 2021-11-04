@@ -104,8 +104,6 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        Debug.Log("Creating building");
-
         buildingPreviewInstance = Instantiate(representedBuilding.GetBuildingPreview());
         buildingRendererInstance = buildingPreviewInstance.GetComponentInChildren<Renderer>();
 

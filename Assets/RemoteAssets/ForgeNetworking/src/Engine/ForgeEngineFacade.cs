@@ -2,6 +2,7 @@
 using Forge.Factory;
 using Forge.Networking.Messaging;
 using Forge.Networking.Sockets;
+using Forge.Networking.Unity.Messages;
 using System.Net;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -39,7 +40,13 @@ namespace Forge.Networking.Unity
 
         public void NetworkingEstablished()
         {
+            if (!IsServer)
+            {
+                var playerRequest = new PlayerObjectRequestMessage();
+                playerRequest.RequestingPlayer = _selfSocket.NetPlayerId;
 
+                NetworkMediator.SendReliableMessage(playerRequest);
+            }
         }
 
         private void Awake()

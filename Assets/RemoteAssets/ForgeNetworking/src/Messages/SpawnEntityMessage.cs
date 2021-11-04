@@ -20,6 +20,8 @@ namespace Forge.Networking.Unity.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
+            base.Deserialize(buffer);
+
             OwnerId = ForgeSerializer.Instance.Deserialize<IPlayerSignature>(buffer);
             Id = ForgeSerializer.Instance.Deserialize<int>(buffer);
             PrefabId = ForgeSerializer.Instance.Deserialize<int>(buffer);
@@ -30,6 +32,8 @@ namespace Forge.Networking.Unity.Messages
 
         public override void Serialize(BMSByte buffer)
         {
+            base.Serialize(buffer);
+
             ForgeSerializer.Instance.Serialize(OwnerId, buffer);
             ForgeSerializer.Instance.Serialize(Id, buffer);
             ForgeSerializer.Instance.Serialize(PrefabId, buffer);

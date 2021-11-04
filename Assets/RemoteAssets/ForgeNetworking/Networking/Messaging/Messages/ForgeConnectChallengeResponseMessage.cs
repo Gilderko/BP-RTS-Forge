@@ -12,11 +12,15 @@ namespace Forge.Networking.Messaging.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
+            base.Deserialize(buffer);
+
             ChallengeAttempt = ForgeSerializer.Instance.Deserialize<byte[]>(buffer);
         }
 
         public override void Serialize(BMSByte buffer)
         {
+            base.Serialize(buffer);
+
             ForgeSerializer.Instance.Serialize(ChallengeAttempt, buffer);
         }
 

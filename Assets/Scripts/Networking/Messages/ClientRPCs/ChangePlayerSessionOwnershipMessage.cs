@@ -14,12 +14,16 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Deserialize(BMSByte buffer)
 		{
+			base.Deserialize(buffer);
+
 			PlayerId = ForgeSerializer.Instance.Deserialize<int>(buffer);
 			IsOwner = ForgeSerializer.Instance.Deserialize<bool>(buffer);
 		}
 
 		public override void Serialize(BMSByte buffer)
 		{
+			base.Serialize(buffer);
+
 			ForgeSerializer.Instance.Serialize(PlayerId, buffer);
 			ForgeSerializer.Instance.Serialize(IsOwner, buffer);
 		}

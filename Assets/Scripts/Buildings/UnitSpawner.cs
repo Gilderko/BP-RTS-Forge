@@ -139,9 +139,8 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button != PointerEventData.InputButton.Left && !IsOwner)
+        if (eventData.button != PointerEventData.InputButton.Left || !IsOwner)
         {
-            Debug.Log("dont own");
             return;
         }
 

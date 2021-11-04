@@ -7,17 +7,21 @@ namespace Forge.Networking.Messaging
         public event MessageSent OnMessageSent;
         public IMessageReceiptSignature Receipt { get; set; }
         public abstract IMessageInterpreter Interpreter { get; }
-        public ulong MessageInstanceId { get; set; }
-        public abstract void Serialize(BMSByte buffer);
-        public abstract void Deserialize(BMSByte buffer);
+        public long MessageInstanceId { get; set; }
+
+        public virtual void Serialize(BMSByte buffer)
+        {
+            ForgeSerializer.Instance.Serialize(MessageInstanceId, buffer);
+        }
+
+        public virtual void Deserialize(BMSByte buffer)
+        {
+            MessageInstanceId = ForgeSerializer.Instance.Deserialize<long>(buffer);
+        }
+
         public void Sent()
         {
             OnMessageSent?.Invoke(this);
-        }
-
-        protected ForgeMessage()
-        {
-            MessageInstanceId = RTSNetworkManager.Instance.GetMessageId();
         }
     }
 }

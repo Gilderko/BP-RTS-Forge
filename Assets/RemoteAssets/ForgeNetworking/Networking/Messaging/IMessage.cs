@@ -7,7 +7,7 @@ namespace Forge.Networking.Messaging
     public interface IMessage
     {
         event MessageSent OnMessageSent;
-        ulong MessageInstanceId { get; set; }
+        long MessageInstanceId { get; set; }
         IMessageReceiptSignature Receipt { get; set; }
         IMessageInterpreter Interpreter { get; }
         void Serialize(BMSByte buffer);

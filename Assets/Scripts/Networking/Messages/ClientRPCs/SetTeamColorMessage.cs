@@ -20,6 +20,8 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Deserialize(BMSByte buffer)
 		{
+			base.Deserialize(buffer);
+
 			PlayerId = ForgeSerializer.Instance.Deserialize<int>(buffer);
 			ColorR = ForgeSerializer.Instance.Deserialize<float>(buffer);
 			ColorG = ForgeSerializer.Instance.Deserialize<float>(buffer);
@@ -28,6 +30,8 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Serialize(BMSByte buffer)
 		{
+			base.Serialize(buffer);
+
 			ForgeSerializer.Instance.Serialize(PlayerId, buffer);
 			ForgeSerializer.Instance.Serialize(ColorR, buffer);
 			ForgeSerializer.Instance.Serialize(ColorG, buffer);

@@ -8,7 +8,13 @@ namespace Forge.Networking.Unity.Messages
     public class GetAllEntitiesRequestMessage : ForgeMessage
     {
         public override IMessageInterpreter Interpreter => GetAllEntitiesRequestInterpreter.Instance;
-        public override void Deserialize(BMSByte buffer) { }
-        public override void Serialize(BMSByte buffer) { }
+        public override void Deserialize(BMSByte buffer) 
+        {
+            base.Deserialize(buffer);
+        }
+        public override void Serialize(BMSByte buffer)
+        {
+            base.Serialize(buffer);
+        }
     }
 }

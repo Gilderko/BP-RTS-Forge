@@ -40,7 +40,6 @@ public class LobbyMenu : MonoBehaviour
         }
 
         List<RTSPlayer> players = RTSNetworkManager.Instance.Players;
-        Debug.Log($"Players are {players.Count}");
 
         for (int i = 0; i < players.Count; i++)
         {

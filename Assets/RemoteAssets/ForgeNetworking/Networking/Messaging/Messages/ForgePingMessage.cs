@@ -10,11 +10,15 @@ namespace Forge.Networking.Messaging.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
+            base.Deserialize(buffer);
+
             // Nothing to deserialize
         }
 
         public override void Serialize(BMSByte buffer)
         {
+            base.Serialize(buffer);
+
             // Nothing to serialize
         }
     }

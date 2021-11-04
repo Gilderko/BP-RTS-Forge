@@ -22,6 +22,8 @@ namespace Forge.Networking.Unity.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
+            base.Deserialize(buffer);
+
             EntityCount = ForgeSerializer.Instance.Deserialize<int>(buffer);
             OwnerIds = new IPlayerSignature[EntityCount];
             Ids = new int[EntityCount];
@@ -44,6 +46,8 @@ namespace Forge.Networking.Unity.Messages
 
         public override void Serialize(BMSByte buffer)
         {
+            base.Serialize(buffer);
+
             ForgeSerializer.Instance.Serialize(EntityCount, buffer);
             for (int i = 0; i < EntityCount; i++)
             {
