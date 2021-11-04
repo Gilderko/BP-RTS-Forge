@@ -41,6 +41,18 @@ public class RTSNetworkManager : MonoBehaviour
         }
     }
 
+    private static ulong MessageIdCounter = 0;
+    private static readonly object counterLock = new object();
+
+    public ulong GetMessageId()
+    {
+        lock (counterLock)
+        {
+            MessageIdCounter++;
+            return MessageIdCounter;
+        }        
+    }
+
     // Singleton pattern
 
     // Client variables
@@ -201,7 +213,7 @@ public class RTSNetworkManager : MonoBehaviour
         playerSpawnMessage.Scale = Vector3.one;
 
         playerSpawnMessage.PlayerName = $"Player {Players.Count}";
-        playerSpawnMessage.IsTeamOwner = (Players.Count == 1);
+        playerSpawnMessage.IsTeamOwner = (Players.Count == 0);
         playerSpawnMessage.MoneyStart = playerMoneyStart;
 
         var color = Random.ColorHSV();
@@ -328,7 +340,6 @@ public class RTSNetworkManager : MonoBehaviour
     public void ClientSetLocalPlayer(RTSPlayer myPlayer)
     {
         localPlayer = myPlayer;
-        Debug.Log($"New instance owner {myPlayer.OwnerSignatureId.GetId()}");
         gameInstanceOwner = myPlayer.OwnerSignatureId;
     }
 }

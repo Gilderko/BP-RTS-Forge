@@ -40,6 +40,7 @@ public class RTSPlayer : NetworkBehaviour
     [SerializeField]
     private int resources = 0;    
 
+    [SerializeField]
     private bool isPartyOwner = false;
 
     [SerializeField]
@@ -309,6 +310,11 @@ public class RTSPlayer : NetworkBehaviour
         Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawned;
         Building.AuthorityOnBuildingSpawned -= AuthorityHandleBuildingSpawned;
         Building.AuthorityOnBuildingDespawned -= AuthorityHandleBuildingDespawned;
+    }
+
+    public void SetOwnerShipNoClient()
+    {
+
     }
 
     public void ClientSetPlayerOwnsSession(bool newState)

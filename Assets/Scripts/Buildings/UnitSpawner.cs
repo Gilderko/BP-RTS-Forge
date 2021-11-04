@@ -141,6 +141,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
     {
         if (eventData.button != PointerEventData.InputButton.Left && !IsOwner)
         {
+            Debug.Log("dont own");
             return;
         }
 
@@ -182,5 +183,6 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
             unitProgressImage.fillAmount = Mathf.SmoothDamp(unitProgressImage.fillAmount, newProgress, ref progressImageVelocity, 0.1f);
         }
     }
+
     #endregion
 }
