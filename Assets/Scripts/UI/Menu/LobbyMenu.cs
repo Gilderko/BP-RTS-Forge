@@ -1,3 +1,4 @@
+using Forge.Networking.Unity.Messages;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,7 +27,6 @@ public class LobbyMenu : MonoBehaviour
         RTSPlayer.ClientOnInfoUpdated -= ClientHandleInfoUpdated;
     }
 
-
     private void AuthorityHandlePartyOwnerStateUpdate(bool state)
     {
         startGameButton.gameObject.SetActive(state);
@@ -40,6 +40,7 @@ public class LobbyMenu : MonoBehaviour
         }
 
         List<RTSPlayer> players = RTSNetworkManager.Instance.Players;
+        Debug.Log($"Players are {players.Count}");
 
         for (int i = 0; i < players.Count; i++)
         {
@@ -69,8 +70,9 @@ public class LobbyMenu : MonoBehaviour
 
     public void StartGame()
     {
-        Debug.Log("Client wants to start");
-        Debug.Log(RTSNetworkManager.Instance.LocalPlayer.IsPartyOwner());
-        RTSNetworkManager.Instance.LocalPlayer.CmdStartGameServerRpc();
+        var reqStartMessage = new RequestGameStartMessage();
+        reqStartMessage.PlayerId = RTSNetworkManager.Instance.LocalPlayer.OwnerSignatureId.GetId();
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(reqStartMessage);
     }
 }

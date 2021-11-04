@@ -14,6 +14,7 @@ namespace Forge.Networking.Unity
         [SerializeField, HideInInspector] private int _sceneIndex = 0;
 
         [SerializeField] private int _prefabId;
+        [SerializeField] private int _entityId;
         public IPlayerSignature OwnerID { get; set; }
         public int Id { get; set; }
         public int PrefabId { get { return _prefabId; } set { } }
@@ -29,12 +30,13 @@ namespace Forge.Networking.Unity
 
         private void Awake()
         {
-            _sceneIndex = SceneManager.GetActiveScene().buildIndex;
+            _sceneIndex = SceneManager.GetActiveScene().buildIndex;            
         }
 
         private void Start()
         {
-            _engine = UnityExtensions.FindInterface<IEngineFacade>();            
+            _engine = UnityExtensions.FindInterface<IEngineFacade>();
+            _entityId = Id;
         }
 
         private void OnDestroy()

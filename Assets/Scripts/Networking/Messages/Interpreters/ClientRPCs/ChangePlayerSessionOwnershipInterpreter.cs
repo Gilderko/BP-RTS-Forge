@@ -16,7 +16,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
 			var castedMessage = (ChangePlayerSessionOwnershipMessage)message;
-			var player = RTSNetworkManager.Instance.GetRTSPlayerByUID(castedMessage.PlayerId);
+			var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.PlayerId);
 			player.ClientSetPlayerOwnsSession(castedMessage.IsOwner);
 		}
 	}

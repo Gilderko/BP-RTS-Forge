@@ -17,7 +17,8 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
 			var castedMessage = (LoadSceneFromServerMessage)message;
-			SceneManager.LoadScene(castedMessage.SceneName);
+
+			RTSNetworkManager.Instance.StartCoroutine(RTSNetworkManager.Instance.ClientLoadLevel(castedMessage.SceneName));
 		}
 	}
 }

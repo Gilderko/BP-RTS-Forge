@@ -8,7 +8,7 @@ public class TeamColorSetter : NetworkBehaviour
 
     public void Start()
     {
-        RTSPlayer player = RTSNetworkManager.Instance.GetRTSPlayerByUID(OwnerClientId);
+        RTSPlayer player = RTSNetworkManager.Instance.GetRTSPlayerById(OwnerClientId);
 
         if (IsClient)
         {
@@ -21,7 +21,7 @@ public class TeamColorSetter : NetworkBehaviour
     {
         if (IsClient)
         {
-            RTSPlayer player = RTSNetworkManager.Instance.GetRTSPlayerByUID(OwnerClientId);
+            RTSPlayer player = RTSNetworkManager.Instance.GetRTSPlayerById(OwnerClientId);
 
             player.ClientOnColorUpdated -= HandleTeamColorUpdated;
         }

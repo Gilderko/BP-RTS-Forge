@@ -5,6 +5,7 @@ using Forge.Networking.Players;
 using Forge.Networking.Unity;
 using Forge.Networking.Unity.Messages;
 using Forge.Networking.Unity.Messages.Interpreters;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,7 +17,10 @@ public class RTSNetworkManager : MonoBehaviour
     public bool IsServer { get => Facade.IsServer; }
     public bool IsClient { get => !Facade.IsServer; }
 
+    [Header("Player")]
     [SerializeField] private RTSPlayer playerPrefab = null;
+    [SerializeField] private int playerMoneyStart = 500;
+
     [SerializeField] private UnitBase playerBase = null;
     [SerializeField] private GameOverHandler gameOverHandler = null;
     [SerializeField] private ForgeEngineFacade forgeEngineFacade = null;       
@@ -50,6 +54,8 @@ public class RTSNetworkManager : MonoBehaviour
 
     // Server variables
 
+    private List<IPlayerSignature> playersConfirmedLoadedGame = new List<IPlayerSignature>();
+
     private MessagePool<SpawnEntityMessage> spawnPool = new MessagePool<SpawnEntityMessage>();
 
     private bool isGameInProgress = false;
@@ -65,7 +71,7 @@ public class RTSNetworkManager : MonoBehaviour
     // Variable Client and Server
 
     private void Awake()
-    {
+    {        
         instance = this;
     }
 
@@ -74,7 +80,6 @@ public class RTSNetworkManager : MonoBehaviour
     /// </summary>
     public void StartServer(ushort portNumber, int maxPlayers)
     {
-        Debug.Log("Server start");
         var factory = AbstractFactory.Get<INetworkTypeFactory>();
         Facade.NetworkMediator = factory.GetNew<INetworkMediator>();        
 
@@ -95,7 +100,14 @@ public class RTSNetworkManager : MonoBehaviour
 
         Facade.NetworkMediator.ChangeEngineProxy(Facade);
 
-        Facade.NetworkMediator.StartClient(address, portNumber);
+        try
+        {
+            Facade.NetworkMediator.StartClient(address, portNumber);
+        }
+        catch (System.Exception ex)
+        {
+            Facade.Logger.LogException(ex);
+        }
     }
 
     private void HandleNewClientConnected(INetPlayer player)
@@ -108,12 +120,15 @@ public class RTSNetworkManager : MonoBehaviour
         ServerHandleClientDisconnected(player);
     }
 
-    private void OnServerSceneChanged()
+    private void InitializeNewGame()
     {
         if (IsServer)
         {
+            Debug.Log("Scene changed on server");
+            Debug.Log(SceneManager.GetActiveScene().name);
             if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map"))
             {
+                Debug.Log("Going to spawn stuff");
                 SpawnEntityMessage spawnMessage = spawnPool.Get();
                 spawnMessage.Id = ServerGetNewEntityId();
                 spawnMessage.OwnerId = ServerSignature;
@@ -163,6 +178,16 @@ public class RTSNetworkManager : MonoBehaviour
         }
     }
 
+    public IEnumerator ClientLoadLevel(string levelName)
+    {
+        yield return SceneManager.LoadSceneAsync(levelName);
+
+        var confirmMessage = new ConfirmLevelLoadedMessage();
+        confirmMessage.ConfirmedPlayer = LocalPlayer.OwnerSignatureId;
+
+        Facade.NetworkMediator.SendReliableMessage(confirmMessage);
+    }
+
     private void ServerHandleClientConnected(INetPlayer player)
     {
         if (isGameInProgress)
@@ -174,14 +199,11 @@ public class RTSNetworkManager : MonoBehaviour
 
         // Need to spawn new player object from a message and tell all the other clients to also spawn it
         // set its values as name color and owner
-        // the values will be synced with ServerSet used
-
         var playerSpawnMessage = new SpawnPlayerObjectMessage();
         playerSpawnMessage.Id = ServerGetNewEntityId();
         playerSpawnMessage.OwnerId = player.Id;
-        Debug.Log(playerPrefab.GetComponent<NetworkEntity>().PrefabId);
         playerSpawnMessage.PrefabId = playerPrefab.GetComponent<NetworkEntity>().PrefabId;
-        
+
         playerSpawnMessage.Position = Vector3.zero;
         playerSpawnMessage.Rotation = Quaternion.identity;
         playerSpawnMessage.Scale = Vector3.one;
@@ -194,16 +216,21 @@ public class RTSNetworkManager : MonoBehaviour
         playerSpawnMessage.Green = color.g;
         playerSpawnMessage.Blue = color.b;
 
+        playerSpawnMessage.MoneyStart = playerMoneyStart;
+
         SpawnPlayerObjectInterpreter.Instance.Interpret(Facade.NetworkMediator, null, playerSpawnMessage);
 
-        Facade.NetworkMediator.SendReliableMessage(playerSpawnMessage);
+        Facade.NetworkMediator.SendReliableMessage(playerSpawnMessage);        
 
         // Tell the client to spawn all the previous PlayerObjects (with the values)
+
+        Debug.Log(Players.Count);
 
         foreach (var spawnedPlayer in Players)
         {
             if (spawnedPlayer.OwnerSignatureId == player.Id)
             {
+                Debug.Log("Not sending myself again");
                 continue;
             }
 
@@ -223,11 +250,20 @@ public class RTSNetworkManager : MonoBehaviour
             spawnExistingPlayer.Red = playerColor.r;
             spawnExistingPlayer.Green = playerColor.g;
             spawnExistingPlayer.Blue = playerColor.b;
+
+            spawnExistingPlayer.MoneyStart = playerMoneyStart;
+
+            Facade.NetworkMediator.SendReliableMessage(spawnExistingPlayer, player);
         }
     }
 
     public void ClientHandleClientConnected(int obj)
     {
+        if (IsServer)
+        {
+            return;
+        }
+
         ClientOnConnected?.Invoke();
     }
 
@@ -252,21 +288,18 @@ public class RTSNetworkManager : MonoBehaviour
         }
     }
 
-    #region Server  
-
-    public void StartGame()
+    public IEnumerator StartGame()
     {
-        if (Players.Count < 2) { return; }
+        if (Players.Count < 2) { yield break; }
 
         isGameInProgress = true;
 
         LoadSceneFromServerMessage loadSceneMessage = new LoadSceneFromServerMessage();
         loadSceneMessage.SceneName = "Scene_Map";
 
-        SceneManager.LoadScene(loadSceneMessage.SceneName);
-        Facade.NetworkMediator.SendReliableMessage(loadSceneMessage);
+        yield return SceneManager.LoadSceneAsync(loadSceneMessage.SceneName);
 
-        OnServerSceneChanged();
+        Facade.NetworkMediator.SendReliableMessage(loadSceneMessage);
     }
 
     public int ServerGetNewEntityId()
@@ -274,9 +307,17 @@ public class RTSNetworkManager : MonoBehaviour
         return Facade.GetNewEntityId();
     }
 
-    #endregion
+    public void AddPlayerReady(IPlayerSignature playerSign)
+    {
+        playersConfirmedLoadedGame.Add(playerSign);
 
-    public RTSPlayer GetRTSPlayerByUID(int UID)
+        if (playersConfirmedLoadedGame.Count == Players.Count)
+        {
+            InitializeNewGame();
+        }
+    }
+
+    public RTSPlayer GetRTSPlayerById(int UID)
     {
         return Players.Find(player => player.OwnerClientId == UID);
     }

@@ -46,7 +46,7 @@ namespace Forge.Networking
 
         private void HandleNewPlayer(INetPlayer player)
         {
-            Debug.Log("New player");
+            //Debug.Log("New player");
         }
 
         public void StartClient(string hostAddress, ushort port)
@@ -92,6 +92,7 @@ namespace Forge.Networking
                 while (itr.MoveNext())
                 {
                     if (itr.Current != null)
+                        Debug.Log("New message sent to player");
                         MessageBus.SendReliableMessage(message, SocketFacade.ManagedSocket, itr.Current.EndPoint);
                 }
             }

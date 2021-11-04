@@ -37,10 +37,12 @@ public class RTSPlayer : NetworkBehaviour
 
     // Synced values
 
+    [SerializeField]
     private int resources = 0;    
 
     private bool isPartyOwner = false;
 
+    [SerializeField]
     private string playerName = "";
 
     private Vector3 cameraStartPosition = new Vector3(0, 0, 21);
@@ -61,10 +63,14 @@ public class RTSPlayer : NetworkBehaviour
     [SerializeField]
     private List<Building> myBuildings = new List<Building>();
 
-    public void Start()
+    private void Awake()
     {
-        RTSNetworkManager.Instance.Players.Add(this);        
+        DontDestroyOnLoad(this);
+        RTSNetworkManager.Instance.Players.Add(this);
+    }
 
+    public void Start()
+    {      
         if (IsServer)
         {
             OnStartServer();
@@ -156,7 +162,7 @@ public class RTSPlayer : NetworkBehaviour
         resourceMessage.PlayerId = OwnerClientId;
         resourceMessage.ResourcesValue = resources;        
 
-        RTSNetworkManager.Instance.Facade.NetworkMediator.SendMessage(resourceMessage, forgePlayer);
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(resourceMessage, forgePlayer);
     }
 
     public void ServerSetPlayerName(string displayName)
@@ -213,7 +219,7 @@ public class RTSPlayer : NetworkBehaviour
             return;
         }
 
-        RTSNetworkManager.Instance.StartGame();
+        RTSNetworkManager.Instance.StartCoroutine(RTSNetworkManager.Instance.StartGame());
     }
 
 
@@ -263,6 +269,8 @@ public class RTSPlayer : NetworkBehaviour
     {
         if (!IsOwner)
         {
+            Debug.Log(OwnerSignatureId);
+            Debug.Log("Isnt owner");
             return;
         }
 
