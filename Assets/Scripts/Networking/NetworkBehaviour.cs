@@ -9,7 +9,7 @@ public class NetworkBehaviour : MonoBehaviour
 {
     private NetworkEntity _netEntity = null;
 
-    public bool IsOwner { get => _netEntity.OwnerID.GetId() == OwnerClientId; }
+    public bool IsOwner { get => RTSNetworkManager.Instance.gameInstanceOwner.Equals(OwnerSignatureId); }
 
     public bool IsServer { get => RTSNetworkManager.Instance.Facade.IsServer; }
 

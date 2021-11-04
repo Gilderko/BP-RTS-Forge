@@ -1,4 +1,6 @@
+using Forge.Networking.Messaging;
 using Forge.Networking.Unity;
+using Forge.Networking.Unity.Messages;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,6 +23,7 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
     private GameObject buildingPreviewInstance;
     private Renderer buildingRendererInstance;
 
+    private MessagePool<ServerAskSpawnBuildingMessage> spawnBuildAsk = new MessagePool<ServerAskSpawnBuildingMessage>();
 
     private void Start()
     {
@@ -57,7 +60,15 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
         {
             if (hasHit)
             {
-                player.CmdTryPlaceBuildingServerRpc(representedBuilding.GetComponent<NetworkEntity>().PrefabId, hit.point);
+                var spawnBuildMessage = spawnBuildAsk.Get();
+                spawnBuildMessage.OwnerId = player.OwnerSignatureId;
+                spawnBuildMessage.PrefabId = representedBuilding.GetComponent<NetworkEntity>().PrefabId;
+
+                spawnBuildMessage.PosX = hit.point.x;
+                spawnBuildMessage.PosY = hit.point.y;
+                spawnBuildMessage.PosZ = hit.point.z;
+
+                RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
             }
 
             Destroy(buildingPreviewInstance);

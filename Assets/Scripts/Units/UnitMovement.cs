@@ -24,6 +24,7 @@ public class UnitMovement : NetworkBehaviour
             GameOverHandler.ServerOnGameOver -= ServerHandleGameOverClientRpc;
         }
     }
+
     private void ServerHandleGameOverClientRpc()
     {
         agent.ResetPath();
@@ -60,17 +61,11 @@ public class UnitMovement : NetworkBehaviour
 
     public void CmdMoveServerRpc(Vector3 position)
     {
-        if (!IsOwner)
-        {
-            return;
-        }
-
         targeter.ClearTarget();
 
         NavMeshHit hit;
         if (!NavMesh.SamplePosition(position, out hit, 1f, NavMesh.AllAreas))
         {
-
             return;
         }
 

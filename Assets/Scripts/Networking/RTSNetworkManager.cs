@@ -64,7 +64,10 @@ public class RTSNetworkManager : MonoBehaviour
 
     // Variables Client and Server
 
-    public IPlayerSignature ServerSignature;
+    /// <summary>
+    /// On server it is server on client it is local client
+    /// </summary>
+    public IPlayerSignature gameInstanceOwner;
 
     public List<RTSPlayer> Players { get; } = new List<RTSPlayer>();
 
@@ -90,7 +93,7 @@ public class RTSNetworkManager : MonoBehaviour
         
         Facade.NetworkMediator.StartServer(portNumber, maxPlayers);
 
-        ServerSignature = AbstractFactory.Get<INetworkTypeFactory>().GetNew<IPlayerSignature>();
+        gameInstanceOwner = Facade.NetworkMediator.SocketFacade.NetPlayerId;
     }
 
     public void StartClient(string address, ushort portNumber)
@@ -131,7 +134,7 @@ public class RTSNetworkManager : MonoBehaviour
                 Debug.Log("Going to spawn stuff");
                 SpawnEntityMessage spawnMessage = spawnPool.Get();
                 spawnMessage.Id = ServerGetNewEntityId();
-                spawnMessage.OwnerId = ServerSignature;
+                spawnMessage.OwnerId = gameInstanceOwner;
                 spawnMessage.PrefabId = gameOverHandler.GetComponent<NetworkEntity>().PrefabId;
 
                 spawnMessage.Position = Vector3.zero;
@@ -178,22 +181,11 @@ public class RTSNetworkManager : MonoBehaviour
         }
     }
 
-    public IEnumerator ClientLoadLevel(string levelName)
-    {
-        yield return SceneManager.LoadSceneAsync(levelName);
-
-        var confirmMessage = new ConfirmLevelLoadedMessage();
-        confirmMessage.ConfirmedPlayer = LocalPlayer.OwnerSignatureId;
-
-        Facade.NetworkMediator.SendReliableMessage(confirmMessage);
-    }
-
     private void ServerHandleClientConnected(INetPlayer player)
     {
         if (isGameInProgress)
         {
-            // Here I need to find a way to disconnect a person
-            
+            // Here I need to find a way to disconnect a person            
             return;
         }
 
@@ -210,21 +202,18 @@ public class RTSNetworkManager : MonoBehaviour
 
         playerSpawnMessage.PlayerName = $"Player {Players.Count}";
         playerSpawnMessage.IsTeamOwner = (Players.Count == 1);
+        playerSpawnMessage.MoneyStart = playerMoneyStart;
 
         var color = Random.ColorHSV();
         playerSpawnMessage.Red = color.r;
         playerSpawnMessage.Green = color.g;
-        playerSpawnMessage.Blue = color.b;
-
-        playerSpawnMessage.MoneyStart = playerMoneyStart;
+        playerSpawnMessage.Blue = color.b;        
 
         SpawnPlayerObjectInterpreter.Instance.Interpret(Facade.NetworkMediator, null, playerSpawnMessage);
 
         Facade.NetworkMediator.SendReliableMessage(playerSpawnMessage);        
 
         // Tell the client to spawn all the previous PlayerObjects (with the values)
-
-        Debug.Log(Players.Count);
 
         foreach (var spawnedPlayer in Players)
         {
@@ -245,16 +234,25 @@ public class RTSNetworkManager : MonoBehaviour
 
             spawnExistingPlayer.PlayerName = spawnedPlayer.GetDisplayName();
             spawnExistingPlayer.IsTeamOwner = spawnedPlayer.IsPartyOwner();
+            spawnExistingPlayer.MoneyStart = playerMoneyStart;
 
             var playerColor = spawnedPlayer.GetTeamColor();
             spawnExistingPlayer.Red = playerColor.r;
             spawnExistingPlayer.Green = playerColor.g;
-            spawnExistingPlayer.Blue = playerColor.b;
-
-            spawnExistingPlayer.MoneyStart = playerMoneyStart;
+            spawnExistingPlayer.Blue = playerColor.b;            
 
             Facade.NetworkMediator.SendReliableMessage(spawnExistingPlayer, player);
         }
+    }
+
+    public IEnumerator ClientLoadLevel(string levelName)
+    {
+        yield return SceneManager.LoadSceneAsync(levelName);
+
+        var confirmMessage = new ConfirmLevelLoadedMessage();
+        confirmMessage.ConfirmedPlayer = LocalPlayer.OwnerSignatureId;
+
+        Facade.NetworkMediator.SendReliableMessage(confirmMessage);
     }
 
     public void ClientHandleClientConnected(int obj)
@@ -329,6 +327,8 @@ public class RTSNetworkManager : MonoBehaviour
 
     public void ClientSetLocalPlayer(RTSPlayer myPlayer)
     {
-        localPlayer = myPlayer; 
+        localPlayer = myPlayer;
+        Debug.Log($"New instance owner {myPlayer.OwnerSignatureId.GetId()}");
+        gameInstanceOwner = myPlayer.OwnerSignatureId;
     }
 }

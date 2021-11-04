@@ -15,12 +15,6 @@ public class PrefabManager : ScriptableObject, IPrefabManager
 
     public Transform GetPrefabById(int id)
     {
-        foreach(var pref in _prefabs)
-        {
-            Debug.Log(pref.PrefabId);
-        }
-
-        Debug.Log(_prefabs.First(entity => entity.PrefabId == id).gameObject.name);
         return _prefabs.First(entity => entity.PrefabId == id).transform;
     }
 }

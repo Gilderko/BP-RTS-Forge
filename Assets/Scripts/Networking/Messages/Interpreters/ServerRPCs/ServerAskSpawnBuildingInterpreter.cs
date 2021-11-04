@@ -15,8 +15,10 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
-			var m = (ServerAskSpawnBuildingMessage)message;
-			throw new NotImplementedException();
+			var castedMessage = (ServerAskSpawnBuildingMessage)message;
+
+			var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.OwnerId.GetId());
+			player.CmdTryPlaceBuildingServerRpc(castedMessage.PrefabId, new Vector3(castedMessage.PosX, castedMessage.PosY, castedMessage.PosZ));
 		}
 	}
 }

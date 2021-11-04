@@ -28,7 +28,7 @@ public class RTSPlayer : NetworkBehaviour
     private Transform cameraTransform;
 
     [SerializeField]
-    private Vector2 cameraStartOffset = new Vector2(-5, -5);
+    private Vector2 cameraStartOffset = new Vector2(-5, -5);    
 
     private INetPlayer forgePlayer;
 
@@ -70,7 +70,7 @@ public class RTSPlayer : NetworkBehaviour
     }
 
     public void Start()
-    {      
+    { 
         if (IsServer)
         {
             OnStartServer();
@@ -78,6 +78,13 @@ public class RTSPlayer : NetworkBehaviour
 
         if (IsClient)
         {
+            if (RTSNetworkManager.Instance.Facade.NetworkMediator.SocketFacade.NetPlayerId.Equals(OwnerSignatureId))
+            {
+                Debug.Log("Are the same");
+                RTSNetworkManager.Instance.ClientSetLocalPlayer(this);
+                ClientSetPlayerOwnsSession(isPartyOwner);
+            }
+
             OnStartAuthority();
         }
     }
@@ -267,14 +274,14 @@ public class RTSPlayer : NetworkBehaviour
 
     public void OnStartAuthority()
     {
+        Debug.Log($"Players owner {OwnerSignatureId.GetId()}");
+        Debug.Log($"Local game owner {RTSNetworkManager.Instance.gameInstanceOwner.GetId()}");
         if (!IsOwner)
         {
             Debug.Log(OwnerSignatureId);
             Debug.Log("Isnt owner");
             return;
         }
-
-        RTSNetworkManager.Instance.ClientSetLocalPlayer(this);
 
         Unit.AuthorityOnUnitSpawned += AuthorityHandleUnitSpawned;
         Unit.AuthorityOnUnitDespawned += AuthorityHandleUnitDespawned;
@@ -306,12 +313,13 @@ public class RTSPlayer : NetworkBehaviour
 
     public void ClientSetPlayerOwnsSession(bool newState)
     {
-        if (!IsOwner)
+        isPartyOwner = newState;   
+
+        if (!isPartyOwner)
         {
             return;
         }
 
-        isPartyOwner = newState;
         AuthorityOnPartyOwnerChanged?.Invoke(newState);
     }
 
