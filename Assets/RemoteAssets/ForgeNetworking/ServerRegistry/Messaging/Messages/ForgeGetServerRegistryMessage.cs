@@ -13,14 +13,14 @@ namespace Forge.ServerRegistry.Messaging.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
-            base.Deserialize(buffer);
+            
 
             // Nothing to serialize
         }
 
         public override void Serialize(BMSByte buffer)
         {
-            base.Serialize(buffer);
+            
 
             // Nothing to serialize
         }

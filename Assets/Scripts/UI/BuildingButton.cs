@@ -1,6 +1,7 @@
 using Forge.Networking.Messaging;
 using Forge.Networking.Unity;
 using Forge.Networking.Unity.Messages;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -67,6 +68,8 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
                 spawnBuildMessage.PosX = hit.point.x;
                 spawnBuildMessage.PosY = hit.point.y;
                 spawnBuildMessage.PosZ = hit.point.z;
+
+                spawnBuildMessage.BuildingCount = player.GetMyBuildings().Count();
 
                 RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
             }

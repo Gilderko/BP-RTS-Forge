@@ -18,7 +18,7 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Deserialize(BMSByte buffer)
 		{
-			base.Deserialize(buffer);
+			
 
 			EntityId = ForgeSerializer.Instance.Deserialize<int>(buffer);
 			Position = ForgeSerializer.Instance.Deserialize<Vector3>(buffer);
@@ -29,7 +29,7 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Serialize(BMSByte buffer)
 		{
-			base.Serialize(buffer);
+			
 
 			ForgeSerializer.Instance.Serialize(EntityId, buffer);
 			ForgeSerializer.Instance.Serialize(Position, buffer);

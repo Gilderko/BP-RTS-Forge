@@ -15,7 +15,7 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Deserialize(BMSByte buffer)
 		{
-			base.Deserialize(buffer);
+			
 
 			PosX = ForgeSerializer.Instance.Deserialize<float>(buffer);
 			PosY = ForgeSerializer.Instance.Deserialize<float>(buffer);
@@ -24,7 +24,7 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Serialize(BMSByte buffer)
 		{
-			base.Serialize(buffer);
+			
 
 			ForgeSerializer.Instance.Serialize(PosX, buffer);
 			ForgeSerializer.Instance.Serialize(PosY, buffer);

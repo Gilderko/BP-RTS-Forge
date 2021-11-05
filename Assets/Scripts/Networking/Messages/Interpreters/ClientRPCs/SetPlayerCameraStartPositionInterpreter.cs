@@ -16,7 +16,14 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
 			var castedMessage = (SetPlayerCameraStartPositionMessage)message;
-			RTSNetworkManager.Instance.LocalPlayer.ClientSetCameraStartingPosition(new Vector3(castedMessage.PosX, castedMessage.PosY, castedMessage.PosZ));
+			var player = RTSNetworkManager.Instance.LocalPlayer;
+
+			if (player == null)
+            {
+				return;
+            }
+
+			player.ClientSetCameraStartingPosition(new Vector3(castedMessage.PosX, castedMessage.PosY, castedMessage.PosZ));
 		}
 	}
 }

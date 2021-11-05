@@ -18,6 +18,12 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 			var castedMessage = (SetTeamColorMessage)message;
 
 			var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.PlayerId);
+
+			if (player == null)
+            {
+				retun;
+            }
+
 			player.ClientSetNewTeamColor(new Color(castedMessage.ColorR, castedMessage.ColorG, castedMessage.ColorB));
 		}
 	}

@@ -15,7 +15,7 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Deserialize(BMSByte buffer)
 		{
-			base.Deserialize(buffer);
+			
 
 			PlayerId = ForgeSerializer.Instance.Deserialize<int>(buffer);
 			NewPlayerName = ForgeSerializer.Instance.Deserialize<string>(buffer);
@@ -23,7 +23,7 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Serialize(BMSByte buffer)
 		{
-			base.Serialize(buffer);
+			
 
 			ForgeSerializer.Instance.Serialize(PlayerId, buffer);
 			ForgeSerializer.Instance.Serialize(NewPlayerName, buffer);

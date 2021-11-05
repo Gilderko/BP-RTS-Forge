@@ -14,7 +14,7 @@ namespace Forge.Networking.Unity.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
-            base.Deserialize(buffer);
+            
 
             EntityID = ForgeSerializer.Instance.Deserialize<int>(buffer);
             NewHealthValue = ForgeSerializer.Instance.Deserialize<int>(buffer);
@@ -22,7 +22,7 @@ namespace Forge.Networking.Unity.Messages
 
         public override void Serialize(BMSByte buffer)
         {
-            base.Serialize(buffer);
+            
 
             ForgeSerializer.Instance.Serialize(EntityID, buffer);
             ForgeSerializer.Instance.Serialize(NewHealthValue, buffer);

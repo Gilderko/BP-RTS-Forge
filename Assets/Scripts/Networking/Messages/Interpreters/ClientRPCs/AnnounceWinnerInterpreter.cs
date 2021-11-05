@@ -16,8 +16,15 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
 			var castedMessage = (AnnounceWinnerMessage)message;
-			var entity = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.ObjectId);
-			entity.OwnerGameObject.GetComponent<GameOverHandler>().ClientHandleGameOver(castedMessage.WinningPlayerName);
+			try
+            {
+				var entity = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.ObjectId);
+				entity.OwnerGameObject.GetComponent<GameOverHandler>().ClientHandleGameOver(castedMessage.WinningPlayerName);
+			}
+			catch (EntityNotFoundException)
+            {
+				return;
+            }			
 		}
 	}
 }

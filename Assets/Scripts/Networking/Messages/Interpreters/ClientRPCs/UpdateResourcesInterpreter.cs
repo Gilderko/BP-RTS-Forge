@@ -18,6 +18,11 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 			var castedMessage = (UpdateResourcesMessage)message;
 			var player = RTSNetworkManager.Instance.LocalPlayer;
 
+			if (player == null)
+            {
+				return;
+            }
+
 			player.ClientSetResources(castedMessage.ResourcesValue);
 		}
 	}

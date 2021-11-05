@@ -20,47 +20,6 @@ namespace Forge.Networking
         public bool IsClient => SocketFacade is ISocketClientFacade;
         public bool IsServer => SocketFacade is ISocketServerFacade;
 
-        // Message counter
-
-        private long MessageIdCounter = 1;
-        private readonly object counterLock = new object();
-
-        public long GetMessageId()
-        {
-            lock (counterLock)
-            {                
-                MessageIdCounter++;
-                return MessageIdCounter;
-            }
-        }
-
-        private HashSet<long> BagOfUsedIds = new HashSet<long>();
-        private readonly object handleLock = new object();
-
-        public bool HandleMessageIsInIdCheck(long lookedValue)
-        {
-            if (lookedValue <= 0)
-            {
-                return false;
-            }
-
-            lock (handleLock)
-            { 
-                bool isIn = BagOfUsedIds.Contains(lookedValue);
-                if (isIn)
-                {
-                    return true;
-                }
-                else
-                {
-                    BagOfUsedIds.Add(lookedValue);
-                    return false;
-                }
-            }
-        }
-
-        // Message counter
-
         private readonly IPlayerTimeoutBridge _timeoutBridge;
 
         public ForgeNetworkMediator()
@@ -88,7 +47,7 @@ namespace Forge.Networking
         }
 
         private void HandleNewPlayer(INetPlayer player)
-        {
+        {            
             //Debug.Log("New player");
         }
 
@@ -131,7 +90,6 @@ namespace Forge.Networking
         {
             if (SocketFacade is ISocketServerFacade)
             {
-                message.MessageInstanceId = GetMessageId();
                 var itr = PlayerRepository.GetEnumerator();
                 while (itr.MoveNext())
                 {
@@ -147,13 +105,11 @@ namespace Forge.Networking
 
         public void SendReliableMessage(IMessage message, INetPlayer player)
         {
-            message.MessageInstanceId = GetMessageId();
             MessageBus.SendMessage(message, SocketFacade.ManagedSocket, player.EndPoint);
         }
 
         public void SendReliableMessage(IMessage message, EndPoint endpoint)
         {
-            message.MessageInstanceId = GetMessageId();
             MessageBus.SendMessage(message, SocketFacade.ManagedSocket, endpoint);
         }
     }

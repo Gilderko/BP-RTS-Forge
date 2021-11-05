@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using Forge.Networking.Messaging;
 using Forge.Networking.Sockets;
@@ -18,6 +19,16 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 			var castedMessage = (ServerAskSpawnBuildingMessage)message;
 
 			var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.OwnerId.GetId());
+			if (player == null)
+            {
+				return;
+            }
+
+			if (player.GetMyBuildings().Count() != castedMessage.BuildingCount)
+            {
+				return;
+            }
+
 			player.CmdTryPlaceBuildingServerRpc(castedMessage.PrefabId, new Vector3(castedMessage.PosX, castedMessage.PosY, castedMessage.PosZ));
 		}
 	}

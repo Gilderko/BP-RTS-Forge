@@ -24,10 +24,9 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 
 				interpolator.UpdateInterpolation(castedMessage.Position, Quaternion.Euler(castedMessage.RotationX,castedMessage.RotationY,castedMessage.RotationZ));
 			}
-			catch (EntityNotFoundException ex)
+			catch (EntityNotFoundException)
 			{
-				// TODO:  This is getting called before the entity exists
-				netMediator.EngineProxy.Logger.LogException(ex);
+				return;
 			}
 
 		}

@@ -16,7 +16,13 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
 			var castedMessage = (ChangePlayerNameMessage)message;
+
 			var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.PlayerId);
+			if (player == null)
+            {
+				return;
+            }
+
 			player.ClientSetNewPlayerName(castedMessage.NewPlayerName);
 		}
 	}

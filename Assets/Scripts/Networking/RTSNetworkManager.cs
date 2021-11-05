@@ -54,7 +54,7 @@ public class RTSNetworkManager : MonoBehaviour
 
     // Server variables
 
-    private List<IPlayerSignature> playersConfirmedLoadedGame = new List<IPlayerSignature>();
+    private List<int> playersConfirmedLoadedGame = new List<int>();
 
     private MessagePool<SpawnEntityMessage> spawnPool = new MessagePool<SpawnEntityMessage>();
 
@@ -244,6 +244,11 @@ public class RTSNetworkManager : MonoBehaviour
 
     public IEnumerator ClientLoadLevel(string levelName)
     {
+        if (levelName == SceneManager.GetActiveScene().name)
+        {
+            yield break;
+        }
+
         yield return SceneManager.LoadSceneAsync(levelName);
 
         var confirmMessage = new ConfirmLevelLoadedMessage();
@@ -285,7 +290,7 @@ public class RTSNetworkManager : MonoBehaviour
 
     public IEnumerator StartGame()
     {
-        if (Players.Count < 2) { yield break; }
+        if (Players.Count < 2 || isGameInProgress ) { yield break; }
 
         isGameInProgress = true;
 
@@ -304,7 +309,12 @@ public class RTSNetworkManager : MonoBehaviour
 
     public void AddPlayerReady(IPlayerSignature playerSign)
     {
-        playersConfirmedLoadedGame.Add(playerSign);
+        if (playersConfirmedLoadedGame.Contains(playerSign.GetId()))
+        {
+            return;
+        }
+
+        playersConfirmedLoadedGame.Add(playerSign.GetId());
 
         if (playersConfirmedLoadedGame.Count == Players.Count)
         {

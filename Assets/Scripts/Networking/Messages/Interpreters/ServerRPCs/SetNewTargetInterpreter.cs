@@ -16,8 +16,15 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
 			var castedMessage = (SetNewTargetMessage)message;
-			var entityToModify = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.EntityId);
-			entityToModify.OwnerGameObject.GetComponent<Unit>().GetTargeter().CmdSetTargetServerRpc(castedMessage.TargetEntityId);
+            try
+            {
+				var entityToModify = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.EntityId);
+				entityToModify.OwnerGameObject.GetComponent<Unit>().GetTargeter().CmdSetTargetServerRpc(castedMessage.TargetEntityId);
+			}
+			catch (EntityNotFoundException)
+            {
+				return;
+            }			
 		}
 	}
 }

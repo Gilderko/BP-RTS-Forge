@@ -10,6 +10,7 @@ public class GameOverHandler : NetworkBehaviour
 
     public static event Action<string> ClientOnGameOver;
 
+    private bool hasClientAnnounced = false;
     #region Server
 
     private void Start()
@@ -65,6 +66,11 @@ public class GameOverHandler : NetworkBehaviour
 
     public void ClientHandleGameOver(string winner)
     {
+        if (hasClientAnnounced)
+        {
+            return;
+        }
+
         ClientOnGameOver?.Invoke(winner);
     }
 

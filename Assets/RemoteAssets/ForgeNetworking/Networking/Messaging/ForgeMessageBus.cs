@@ -54,7 +54,7 @@ namespace Forge.Networking.Messaging
         public void SendMessage(IMessage message, ISocket sender, EndPoint receiver)
         {
             // TODO:  Possibly use the message interface to get the size needed for this            
-            BMSByte buffer = _bufferPool.Get(1024);
+            BMSByte buffer = _bufferPool.Get(128);
             ForgeSerializer.Instance.Serialize(GetMessageCode(message), buffer);
             if (message.Receipt != null)
                 ForgeSerializer.Instance.Serialize(message.Receipt, buffer);
@@ -125,9 +125,7 @@ namespace Forge.Networking.Messaging
 
         private bool ShouldInterpret(SocketContainerSynchronizationReadData readData)
         {
-            // Check for id in hashset
-            bool wasProcessed = _networkMediator.HandleMessageIsInIdCheck(readData.Message.MessageInstanceId);
-            return (!wasProcessed) && ((_networkMediator.IsClient && readData.Interpreter.ValidOnClient) || (_networkMediator.IsServer && readData.Interpreter.ValidOnServer));
+            return ((_networkMediator.IsClient && readData.Interpreter.ValidOnClient) || (_networkMediator.IsServer && readData.Interpreter.ValidOnServer));
         }
 
         private void ProcessMessageSignature(ISocket readingSocket, EndPoint messageSender, BMSByte buffer, IMessage m)

@@ -17,6 +17,13 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		{
 			var castedMessage = (PlayerObjectRequestMessage)message;
 
+			var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.RequestingPlayer.GetId());
+
+			if (player != null)
+            {
+				return;
+            }
+
 			RTSNetworkManager.Instance.ServerHandleClientConnected(castedMessage.RequestingPlayer);
 	}
 	}

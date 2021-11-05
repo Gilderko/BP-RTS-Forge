@@ -12,14 +12,14 @@ namespace Forge.Networking.Unity.Messages
 
         public override void Deserialize(BMSByte buffer)
         {
-            base.Deserialize(buffer);
+            
 
             MapId = buffer.GetBasicType<string>();
         }
 
         public override void Serialize(BMSByte buffer)
         {
-            base.Serialize(buffer);
+            
 
             ForgeSerializer.Instance.Serialize(MapId, buffer);
         }

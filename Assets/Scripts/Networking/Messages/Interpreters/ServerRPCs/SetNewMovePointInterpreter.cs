@@ -16,10 +16,19 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
 			var castedMessage = (SetNewMovePointMessage)message;
-			var entityToSet = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.EntityId);
 
-			Vector3 newPosition = new Vector3(castedMessage.PosX, castedMessage.PosY, castedMessage.PosZ);
-			entityToSet.OwnerGameObject.GetComponent<Unit>().GetUnitMovement().CmdMoveServerRpc(newPosition);
+			try
+            {
+				var entityToSet = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.EntityId);
+
+				Vector3 newPosition = new Vector3(castedMessage.PosX, castedMessage.PosY, castedMessage.PosZ);
+
+				entityToSet.OwnerGameObject.GetComponent<Unit>().GetUnitMovement().CmdMoveServerRpc(newPosition);
+			}
+			catch (EntityNotFoundException)
+            {
+				return;
+            }			
 		}
 	}
 }

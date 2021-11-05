@@ -18,13 +18,20 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 			var castedMessage = (SpawnPlayerObjectMessage)message;
 
 			IEngineFacade engine = (IEngineFacade)netMediator.EngineProxy;
-			var playerObject = EntitySpawner.SpawnEntityFromMessage(engine, castedMessage).OwnerGameObject.GetComponent<RTSPlayer>();
-			playerObject.ClientSetNewTeamColor(new Color(castedMessage.Red,castedMessage.Green,castedMessage.Blue));
-			playerObject.ClientSetNewPlayerName(castedMessage.PlayerName);
-			playerObject.ClientSetPlayerOwnsSession(castedMessage.IsTeamOwner);
-			playerObject.ClientSetResources(castedMessage.MoneyStart);
+            try
+            {
+				var playerObject = EntitySpawner.SpawnEntityFromMessage(engine, castedMessage).OwnerGameObject.GetComponent<RTSPlayer>();
+				playerObject.ClientSetNewTeamColor(new Color(castedMessage.Red, castedMessage.Green, castedMessage.Blue));
+				playerObject.ClientSetNewPlayerName(castedMessage.PlayerName);
+				playerObject.ClientSetPlayerOwnsSession(castedMessage.IsTeamOwner);
+				playerObject.ClientSetResources(castedMessage.MoneyStart);
 
-			RTSNetworkManager.Instance.ClientHandleClientConnected(castedMessage.OwnerId.GetId());
+				RTSNetworkManager.Instance.ClientHandleClientConnected(castedMessage.OwnerId.GetId());
+			}
+			catch (EntityAlreadyInRepositoryException)
+            {
+				return;
+            }			
 		}
 	}
 }
