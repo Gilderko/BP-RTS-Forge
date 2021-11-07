@@ -21,7 +21,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 
 			if (player == null)
             {
-				retun;
+				return;
             }
 
 			player.ClientSetNewTeamColor(new Color(castedMessage.ColorR, castedMessage.ColorG, castedMessage.ColorB));
