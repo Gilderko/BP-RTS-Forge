@@ -29,7 +29,7 @@ public class UnitProjectile : NetworkBehaviour
                 return;
             }
 
-            if (otherObjectIHit.OwnerClientId == OwnerClientId)
+            if (otherObjectIHit.OwnerClientIntId == OwnerClientIntId)
             {
                 return;
             }

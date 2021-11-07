@@ -8,7 +8,7 @@ namespace Forge.Networking.Messaging
 {
 	public class ForgeMessageRepeater : IMessageRepeater
 	{
-		public int RepeatMillisecondsInterval { get; set; } = 16;
+		public int RepeatMillisecondsInterval { get; set; } = 250;
 		private INetworkMediator _networkMediator;
 
 		private readonly IMessageRepository _messageRepository;

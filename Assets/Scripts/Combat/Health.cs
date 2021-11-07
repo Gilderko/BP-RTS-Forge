@@ -37,7 +37,7 @@ public class Health : NetworkBehaviour
 
     private void ServerHandlePlayerDie(int connectionID)
     {
-        if (connectionID != OwnerClientId)
+        if (connectionID != OwnerClientIntId)
         {
             return;
         }

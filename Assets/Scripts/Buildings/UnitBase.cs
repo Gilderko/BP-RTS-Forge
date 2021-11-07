@@ -33,7 +33,7 @@ public class UnitBase : NetworkBehaviour
 
     private void ServerHandleDeath()
     {
-        ServerOnPlayerDie?.Invoke(OwnerClientId);
+        ServerOnPlayerDie?.Invoke(OwnerClientIntId);
 
         Destroy(gameObject);
     }

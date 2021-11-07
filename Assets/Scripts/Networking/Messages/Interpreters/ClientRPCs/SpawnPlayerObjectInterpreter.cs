@@ -17,6 +17,11 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		{
 			var castedMessage = (SpawnPlayerObjectMessage)message;
 
+			if (RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.OwnerId.GetId()) != null)
+            {
+				return;
+            }
+
 			IEngineFacade engine = (IEngineFacade)netMediator.EngineProxy;
             try
             {

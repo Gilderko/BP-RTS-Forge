@@ -24,6 +24,8 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 				return;
             }
 
+			Debug.Log($"Requesting player is {castedMessage.RequestingPlayer}");
+
 			RTSNetworkManager.Instance.ServerHandleClientConnected(castedMessage.RequestingPlayer);
 	}
 	}

@@ -14,15 +14,11 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Deserialize(BMSByte buffer)
 		{
-			
-
 			RequestingPlayer = ForgeSerializer.Instance.Deserialize<IPlayerSignature>(buffer);			
 		}
 
 		public override void Serialize(BMSByte buffer)
 		{
-			
-
 			ForgeSerializer.Instance.Serialize(RequestingPlayer, buffer);
 		}
 	}

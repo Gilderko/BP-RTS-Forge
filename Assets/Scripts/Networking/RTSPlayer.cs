@@ -128,14 +128,14 @@ public class RTSPlayer : NetworkBehaviour
 
     private void ServerHandleBuildingDespawned(Building building)
     {
-        if (building.OwnerClientId != OwnerClientId) { return; }
+        if (building.OwnerClientIntId != OwnerClientIntId) { return; }
 
         myBuildings.Remove(building);
     }
 
     private void ServerHandleBuildingSpawned(Building building)
     {
-        if (building.OwnerClientId != OwnerClientId) { return; }
+        if (building.OwnerClientIntId != OwnerClientIntId) { return; }
 
         myBuildings.Add(building);
     }
@@ -143,7 +143,7 @@ public class RTSPlayer : NetworkBehaviour
     private void ServerHandleUnitSpawned(Unit unit)
     {
         // Check if the same person who owns this player also owns this unit
-        if (unit.OwnerClientId != OwnerClientId)
+        if (unit.OwnerClientIntId != OwnerClientIntId)
         {
             return;
         }
@@ -153,7 +153,7 @@ public class RTSPlayer : NetworkBehaviour
 
     private void ServerHandleUnitDespawned(Unit unit)
     {
-        if (unit.OwnerClientId != OwnerClientId)
+        if (unit.OwnerClientIntId != OwnerClientIntId)
         {
             return;
         }
@@ -166,7 +166,7 @@ public class RTSPlayer : NetworkBehaviour
         resources += resourcesToAdd;
 
         var resourceMessage = resourcesPool.Get();
-        resourceMessage.PlayerId = OwnerClientId;
+        resourceMessage.PlayerId = OwnerClientIntId;
         resourceMessage.ResourcesValue = resources;        
 
         RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(resourceMessage, forgePlayer);
@@ -178,7 +178,7 @@ public class RTSPlayer : NetworkBehaviour
 
         var message = new ChangePlayerNameMessage();
         message.NewPlayerName = playerName;
-        message.PlayerId = OwnerClientId;
+        message.PlayerId = OwnerClientIntId;
 
         RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(message);
     }
@@ -188,7 +188,7 @@ public class RTSPlayer : NetworkBehaviour
         teamColor = newColor;
 
         var message = new SetTeamColorMessage();
-        message.PlayerId = OwnerClientId;
+        message.PlayerId = OwnerClientIntId;
         message.ColorR = teamColor.r;
         message.ColorG = teamColor.g;
         message.ColorB = teamColor.b;
@@ -202,7 +202,7 @@ public class RTSPlayer : NetworkBehaviour
 
         var message = new ChangePlayerSessionOwnershipMessage();
         message.IsOwner = isPartyOwner;
-        message.PlayerId = OwnerClientId;
+        message.PlayerId = OwnerClientIntId;
 
         RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(message);
     }
@@ -248,6 +248,7 @@ public class RTSPlayer : NetworkBehaviour
 
         if (!CanPlaceBuilding(buildingCollider, positionToSpawn))
         {
+            Debug.Log($"Cant place building {OwnerClientIntId}");
             return;
         }
 
@@ -399,6 +400,7 @@ public class RTSPlayer : NetworkBehaviour
             Quaternion.identity,
             buildingBlockCollisionLayer))
         {
+            Debug.Log($"Physics problem place building {OwnerClientIntId}");
             return false;
         }
 
@@ -409,9 +411,10 @@ public class RTSPlayer : NetworkBehaviour
 
             if (possibleUnit != null)
             {
-                bool hasAuth = IsClient ? possibleUnit.IsOwner : possibleUnit.OwnerClientId == OwnerClientId;
+                bool hasAuth = IsClient ? possibleUnit.IsOwner : possibleUnit.OwnerClientIntId == OwnerClientIntId;
                 if (!hasAuth)
                 {
+                    Debug.Log($"Too close to enemy {OwnerClientIntId}");
                     return false;
                 }
             }
@@ -419,9 +422,10 @@ public class RTSPlayer : NetworkBehaviour
             Building possibleBuilding = hit.transform.GetComponent<Building>();
             if (possibleBuilding != null)
             {
-                bool hasAuth = IsClient ? possibleBuilding.IsOwner : possibleBuilding.OwnerClientId == OwnerClientId;
+                bool hasAuth = IsClient ? possibleBuilding.IsOwner : possibleBuilding.OwnerClientIntId == OwnerClientIntId;
                 if (!hasAuth)
                 {
+                    Debug.Log($"Too close to enemy build {OwnerClientIntId}");
                     return false;
                 }
             }
@@ -431,10 +435,12 @@ public class RTSPlayer : NetworkBehaviour
         {
             if ((positionToSpawn - build.transform.position).sqrMagnitude <= buildingRangeLimit * buildingRangeLimit)
             {
+                Debug.Log($"Close to my enough {OwnerClientIntId}");
                 return true;
             }
         }
 
+        Debug.Log($"Not close enough to my {OwnerClientIntId}");
         return false;
     }
 

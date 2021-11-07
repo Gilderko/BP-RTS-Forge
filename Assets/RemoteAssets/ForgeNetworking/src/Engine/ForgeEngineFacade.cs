@@ -3,6 +3,7 @@ using Forge.Engine;
 using Forge.Factory;
 using Forge.Networking.Messaging;
 using Forge.Networking.Sockets;
+using Forge.Networking.Unity.Messages;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,7 +31,7 @@ namespace Forge.Networking.Unity
 		private EndPoint _serverEndpoint => _selfSocket.ManagedSocket.EndPoint;
 
 		[SerializeField]
-		private PrefabManagerScriptableObject _prefabManager = null;
+		private PrefabManager _prefabManager = null;
 		public IPrefabManager PrefabManager => _prefabManager;
 
 		public IMessageRepository NewClientMessageBuffer { get; private set; }
@@ -39,10 +40,13 @@ namespace Forge.Networking.Unity
 
 		public void NetworkingEstablished()
 		{
-			if (IsServer)
-				ServerStarted();
-			else
-				ClientStarted();
+			if (!IsServer)
+			{
+				var playerRequest = new PlayerObjectRequestMessage();
+				playerRequest.RequestingPlayer = _selfSocket.NetPlayerId;
+
+				NetworkMediator.SendReliableMessage(playerRequest);
+			}
 		}
 
 		private void Awake()
@@ -52,16 +56,6 @@ namespace Forge.Networking.Unity
 			var factory = AbstractFactory.Get<INetworkTypeFactory>();
 			NewClientMessageBuffer = factory.GetNew<IMessageRepository>();
 			EntityRepository = factory.GetNew<IEntityRepository>();
-		}
-
-		private void ServerStarted()
-		{
-			SceneManager.LoadScene(_sceneToLoad);
-		}
-
-		private void ClientStarted()
-		{
-			SceneManager.LoadScene(_sceneToLoad);
 		}
 
 		private void OnDestroy()

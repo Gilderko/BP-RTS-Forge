@@ -45,7 +45,7 @@ public class GameOverHandler : NetworkBehaviour
             return;
         }
 
-        int winnerIndex = bases[0].OwnerClientId;
+        int winnerIndex = bases[0].OwnerClientIntId;
         ServerSendGameOverMessage(winnerIndex);
 
         ServerOnGameOver?.Invoke();

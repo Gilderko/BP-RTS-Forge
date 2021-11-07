@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: -1515825777145437709, guid: 1609d403e2ec74a4d93883e0749437f2, type: 3}
+  playerMoneyStart: 500
   playerBase: {fileID: -8850996560325820486, guid: 15e90b0019d52b34d98aa4678a1a18a6, type: 3}
   gameOverHandler: {fileID: 1273161702178869714, guid: 51225ebfc2af578448f3b05f4bdfd2ec, type: 3}
   forgeEngineFacade: {fileID: 371965343}
@@ -62,4 +63,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sceneToLoad: 
   _sceneToDisconnectTo: 
-  _prefabManager: {fileID: 11400000, guid: 5a4a7fcbe6184634ab9bc317624a4afe, type: 2}
+  _prefabManager: {fileID: 11400000, guid: 199a06a8e37c3784fbfd739f9ffeb3ec, type: 2}

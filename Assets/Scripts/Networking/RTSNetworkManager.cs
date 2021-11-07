@@ -324,7 +324,7 @@ public class RTSNetworkManager : MonoBehaviour
 
     public RTSPlayer GetRTSPlayerById(int UID)
     {
-        return Players.Find(player => player.OwnerClientId == UID);
+        return Players.Find(player => player.OwnerClientIntId == UID);
     }
 
     public int GetPlayerCount()

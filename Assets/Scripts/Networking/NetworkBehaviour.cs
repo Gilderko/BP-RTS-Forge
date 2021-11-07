@@ -17,7 +17,7 @@ public class NetworkBehaviour : MonoBehaviour
 
     public bool IsLocalPlayer { get => IsClient && IsOwner; }
 
-    public int OwnerClientId { get => _netEntity.OwnerId.GetId(); }
+    public int OwnerClientIntId { get => _netEntity.OwnerId.GetId(); }
 
     public IPlayerSignature OwnerSignatureId { get => _netEntity.OwnerId; }
 
