@@ -1,7 +1,7 @@
 ﻿namespace Forge.Factory
 {
-    public interface IGameplayTypeFactory : IFactory
-    {
+	public interface IGameplayTypeFactory : IFactory
+	{
 
-    }
+	}
 }

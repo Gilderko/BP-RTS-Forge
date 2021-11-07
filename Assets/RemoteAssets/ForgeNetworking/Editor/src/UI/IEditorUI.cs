@@ -1,7 +1,7 @@
 namespace Forge.Editor.UI
 {
-    public interface IEditorUI
-    {
-        void Draw();
-    }
+	public interface IEditorUI
+	{
+		void Draw();
+	}
 }

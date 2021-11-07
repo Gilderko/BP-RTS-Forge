@@ -33,7 +33,7 @@ public class Targeter : NetworkBehaviour
     {
         var targetGameObject = RTSNetworkManager.Instance.Facade.EntityRepository.Get(instanceID);
 
-        if (targetGameObject.OwnerID.Equals(OwnerSignatureId))
+        if (targetGameObject.OwnerId.Equals(OwnerSignatureId))
         {
             return;
         }

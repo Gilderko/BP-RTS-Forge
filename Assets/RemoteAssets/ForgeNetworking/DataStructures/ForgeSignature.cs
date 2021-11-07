@@ -2,53 +2,53 @@
 
 namespace Forge.DataStructures
 {
-    public class ForgeSignature : ISignature
-    {
-        private int _id;
+	public class ForgeSignature : ISignature
+	{
+		private int _id;
 
-        public ForgeSignature(ISignatureGenerator<int> generator)
+		public int GetId()
         {
-            _id = generator.Generate();
+			return _id;
         }
 
-        public void Serialize(BMSByte buffer)
-        {
-            ForgeSerializer.Instance.Serialize(_id, buffer);
-        }
+		public ForgeSignature(ISignatureGenerator<int> generator)
+		{
+			_id = generator.Generate();
+		}
 
-        public void Deserialize(BMSByte buffer)
-        {
-            _id = ForgeSerializer.Instance.Deserialize<int>(buffer);
-        }
+		public void Serialize(BMSByte buffer)
+		{
+			ForgeSerializer.Instance.Serialize(_id, buffer);
+		}
 
-        public override bool Equals(object obj)
-        {
-            return _id == ((ForgeSignature)obj)._id;
-        }
+		public void Deserialize(BMSByte buffer)
+		{
+			_id = ForgeSerializer.Instance.Deserialize<int>(buffer);
+		}
 
-        public override int GetHashCode()
-        {
-            return _id.GetHashCode();
-        }
+		public override bool Equals(object obj)
+		{
+			return _id == ((ForgeSignature)obj)._id;
+		}
 
-        public override string ToString()
-        {
-            return _id.ToString();
-        }
+		public override int GetHashCode()
+		{
+			return _id.GetHashCode();
+		}
 
-        public int GetId()
-        {
-            return _id;
-        }
+		public override string ToString()
+		{
+			return _id.ToString();
+		}
 
-        public static bool operator ==(ForgeSignature lhs, ForgeSignature rhs)
-        {
-            return lhs._id == rhs._id;
-        }
+		public static bool operator ==(ForgeSignature lhs, ForgeSignature rhs)
+		{
+			return lhs._id == rhs._id;
+		}
 
-        public static bool operator !=(ForgeSignature lhs, ForgeSignature rhs)
-        {
-            return lhs._id != rhs._id;
-        }
-    }
+		public static bool operator !=(ForgeSignature lhs, ForgeSignature rhs)
+		{
+			return lhs._id != rhs._id;
+		}
+	}
 }

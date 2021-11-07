@@ -2,8 +2,8 @@
 
 namespace Forge.Networking.Players
 {
-    public interface IPlayerSignature : ISignature
-    {
+	public interface IPlayerSignature : ISignature
+	{
 
-    }
+	}
 }

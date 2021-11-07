@@ -1,6 +1,6 @@
 ﻿namespace Forge.Factory
 {
-    internal interface IServerRegistryMessage
-    {
-    }
+	internal interface IServerRegistryMessage
+	{
+	}
 }

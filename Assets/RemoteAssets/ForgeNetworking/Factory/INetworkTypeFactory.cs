@@ -1,7 +1,7 @@
 ﻿namespace Forge.Factory
 {
-    public interface INetworkTypeFactory : IFactory
-    {
+	public interface INetworkTypeFactory : IFactory
+	{
 
-    }
+	}
 }

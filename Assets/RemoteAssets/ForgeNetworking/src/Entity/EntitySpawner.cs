@@ -1,4 +1,5 @@
-﻿using Forge.Networking.Players;
+﻿  
+using Forge.Networking.Players;
 using Forge.Networking.Unity.Messages;
 using UnityEngine;
 
@@ -40,7 +41,7 @@ namespace Forge.Networking.Unity
                 networkBeh.SetEntity(entity);
             }
 
-            entity.OwnerID = ownerId;
+            entity.OwnerId = ownerId;
             entity.Id = id;
             entity.PrefabId = prefabId;
             engine.EntityRepository.Add(entity);

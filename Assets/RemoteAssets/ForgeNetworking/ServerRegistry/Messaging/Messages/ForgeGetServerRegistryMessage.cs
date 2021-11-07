@@ -5,24 +5,20 @@ using Forge.ServerRegistry.Messaging.Interpreters;
 
 namespace Forge.ServerRegistry.Messaging.Messages
 {
-    [ServerListingMessageContract(1, typeof(ForgeGetServerRegistryMessage))]
-    public class ForgeGetServerRegistryMessage : ForgeMessage
-    {
-        public override IMessageInterpreter Interpreter =>
-            AbstractFactory.Get<INetworkTypeFactory>().GetNew<IGetServerRegistryInterpreter>();
+	[ServerListingMessageContract(1, typeof(ForgeGetServerRegistryMessage))]
+	public class ForgeGetServerRegistryMessage : ForgeMessage
+	{
+		public override IMessageInterpreter Interpreter =>
+			AbstractFactory.Get<INetworkTypeFactory>().GetNew<IGetServerRegistryInterpreter>();
 
-        public override void Deserialize(BMSByte buffer)
-        {
-            
+		public override void Deserialize(BMSByte buffer)
+		{
+			// Nothing to serialize
+		}
 
-            // Nothing to serialize
-        }
-
-        public override void Serialize(BMSByte buffer)
-        {
-            
-
-            // Nothing to serialize
-        }
-    }
+		public override void Serialize(BMSByte buffer)
+		{
+			// Nothing to serialize
+		}
+	}
 }

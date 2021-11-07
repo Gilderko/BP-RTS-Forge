@@ -1,7 +1,7 @@
 ﻿namespace Forge.Networking.Sockets
 {
-    public interface IConnectionServerSocket : IServerSocket
-    {
-        ISocket AwaitAccept();
-    }
+	public interface IConnectionServerSocket : IServerSocket
+	{
+		ISocket AwaitAccept();
+	}
 }
