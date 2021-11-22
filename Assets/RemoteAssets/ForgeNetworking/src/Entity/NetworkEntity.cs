@@ -1,4 +1,5 @@
 ﻿using Forge.Networking.Players;
+using Forge.Networking.Unity.Messages;
 using Forge.Unity;
 using System;
 using System.Collections.Generic;
@@ -24,27 +25,29 @@ namespace Forge.Networking.Unity
 			set { _sceneIdentifier = value; }
 		}
 
-		private IEngineFacade _engine;
+		public IEngineFacade engine { get; set; }
 
 		private void Awake()
 		{
 			_sceneIndex = SceneManager.GetActiveScene().buildIndex;
 		}
 
-		private void Start()
-		{
-			_engine = UnityExtensions.FindInterface<IEngineFacade>();
-		}
-
 		private void OnDestroy()
 		{
-			if (_engine.EntityRepository.Exists(this.Id))
-				_engine.EntityRepository.Remove(this);
+			if (engine.IsServer)
+            {
+				var despawnMessage = new DespawnEntityMessage();
+				despawnMessage.EntityId = Id;				
+
+				engine.NetworkMediator.SendReliableMessage(despawnMessage);
+
+				if (engine.EntityRepository.Exists(this.Id))
+					engine.EntityRepository.Remove(this);
+			}
 		}
 
 		private void OnValidate()
 		{
-
 			// OnValidate is only called in the editor
 			if (Application.isPlaying) return;
 

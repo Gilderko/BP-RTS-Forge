@@ -21,7 +21,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 				var entity = ((IEngineFacade)(netMediator.EngineProxy)).EntityRepository.Get(castedMessage.EntityId);
 				entity.OwnerGameObject.GetComponent<UnitSpawner>().CmdSpawnUnitServerRpc();
 			}
-			catch
+			catch (EntityNotFoundException)
             {
 				return;
             }		

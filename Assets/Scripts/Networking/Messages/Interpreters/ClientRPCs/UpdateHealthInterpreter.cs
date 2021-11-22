@@ -19,7 +19,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
                 var entity = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.EntityID);
                 entity.OwnerGameObject.GetComponent<Health>().ClientSetHealth(castedMessage.NewHealthValue);
             }
-            catch
+            catch (EntityNotFoundException)
             {
                 return;
             }            

@@ -43,12 +43,15 @@ public class RTSNetworkManager : MonoBehaviour
 
     // Singleton pattern
 
-    // Client variables
-
-    private RTSPlayer localPlayer;
+    // Client variables    
 
     public static event System.Action ClientOnConnected;
     public static event System.Action ClientOnDisconnected;
+
+    private RTSPlayer localPlayer;
+
+    private readonly object isLoadingLock = new object();
+    private bool hadLoaded = false;
 
     // Client variables
 
@@ -244,17 +247,21 @@ public class RTSNetworkManager : MonoBehaviour
 
     public IEnumerator ClientLoadLevel(string levelName)
     {
-        if (levelName == SceneManager.GetActiveScene().name)
+        lock (isLoadingLock)
         {
-            yield break;
-        }
+            if (levelName == SceneManager.GetActiveScene().name || hadLoaded)
+            {
+                yield break;
+            }
 
-        yield return SceneManager.LoadSceneAsync(levelName);
+            yield return SceneManager.LoadSceneAsync(levelName);
+            hadLoaded = true;
 
-        var confirmMessage = new ConfirmLevelLoadedMessage();
-        confirmMessage.ConfirmedPlayer = LocalPlayer.OwnerSignatureId;
+            var confirmMessage = new ConfirmLevelLoadedMessage();
+            confirmMessage.ConfirmedPlayer = LocalPlayer.OwnerSignatureId;
 
-        Facade.NetworkMediator.SendReliableMessage(confirmMessage);
+            Facade.NetworkMediator.SendReliableMessage(confirmMessage);
+        }    
     }
 
     public void ClientHandleClientConnected(int obj)

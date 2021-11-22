@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkEntity))]
 public class NetworkBehaviour : MonoBehaviour
 {
-    private NetworkEntity _netEntity = null;
+    public NetworkEntity _netEntity = null;
 
     public bool IsOwner { get => RTSNetworkManager.Instance.gameInstanceOwner.Equals(OwnerSignatureId); }
 

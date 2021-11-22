@@ -48,7 +48,7 @@ public class RTSPlayer : NetworkBehaviour
 
     private Vector3 cameraStartPosition = new Vector3(0, 0, 21);
 
-    // Synced values
+    // Synced values  
 
     public event Action<int> ClientOnResourcesUpdated;
     public event Action<Color> ClientOnColorUpdated;
@@ -58,11 +58,13 @@ public class RTSPlayer : NetworkBehaviour
 
     private Color teamColor = new Color();
 
-    [SerializeField]
-    private List<Unit> myUnits = new List<Unit>();
+    private object buildingLock = new object();
 
     [SerializeField]
-    private List<Building> myBuildings = new List<Building>();
+    private HashSet<Unit> myUnits = new HashSet<Unit>();
+
+    [SerializeField]
+    private HashSet<Building> myBuildings = new HashSet<Building>();
 
     private void Awake()
     {
@@ -232,40 +234,44 @@ public class RTSPlayer : NetworkBehaviour
 
     public void CmdTryPlaceBuildingServerRpc(int buildingID, Vector3 positionToSpawn)
     {
-        Building buildingToPlace = buildings.First(build => build.GetComponent<NetworkEntity>().PrefabId == buildingID);
-
-        if (buildingToPlace == null)
+        lock (buildingLock)
         {
-            return;
+            Building buildingToPlace = buildings.First(build => build.GetComponent<NetworkEntity>().PrefabId == buildingID);
+
+            if (buildingToPlace == null)
+            {
+                return;
+            }
+
+            if (resources < buildingToPlace.GetPrice())
+            {
+                Debug.Log("Not enough cash");
+                return;
+            }
+
+            BoxCollider buildingCollider = buildingToPlace.GetComponent<BoxCollider>();
+
+            if (!CanPlaceBuilding(buildingCollider, positionToSpawn))
+            {
+                Debug.Log($"Cant place building {OwnerClientIntId}");
+                return;
+            }
+
+            var spawnBuildMessage = spawnPool.Get();
+            spawnBuildMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
+            spawnBuildMessage.OwnerId = OwnerSignatureId;
+            spawnBuildMessage.PrefabId = buildingToPlace.GetComponent<NetworkEntity>().PrefabId;
+
+            spawnBuildMessage.Position = positionToSpawn;
+            spawnBuildMessage.Rotation = Quaternion.identity;
+            spawnBuildMessage.Scale = Vector3.one;
+
+            EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, spawnBuildMessage);
+
+            RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
+
+            ServerAddResources(-buildingToPlace.GetPrice());
         }
-
-        if (resources < buildingToPlace.GetPrice())
-        {
-            return;
-        }
-
-        BoxCollider buildingCollider = buildingToPlace.GetComponent<BoxCollider>();
-
-        if (!CanPlaceBuilding(buildingCollider, positionToSpawn))
-        {
-            Debug.Log($"Cant place building {OwnerClientIntId}");
-            return;
-        }
-
-        var spawnBuildMessage = spawnPool.Get();
-        spawnBuildMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
-        spawnBuildMessage.OwnerId = OwnerSignatureId;
-        spawnBuildMessage.PrefabId = buildingToPlace.GetComponent<NetworkEntity>().PrefabId;
-
-        spawnBuildMessage.Position = positionToSpawn;
-        spawnBuildMessage.Rotation = Quaternion.identity;
-        spawnBuildMessage.Scale = Vector3.one;
-
-        EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, spawnBuildMessage);
-
-        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
-
-        ServerAddResources(-buildingToPlace.GetPrice());
     }
 
     #endregion
@@ -306,11 +312,6 @@ public class RTSPlayer : NetworkBehaviour
         Unit.AuthorityOnUnitDespawned -= AuthorityHandleUnitDespawned;
         Building.AuthorityOnBuildingSpawned -= AuthorityHandleBuildingSpawned;
         Building.AuthorityOnBuildingDespawned -= AuthorityHandleBuildingDespawned;
-    }
-
-    public void SetOwnerShipNoClient()
-    {
-
     }
 
     public void ClientSetPlayerOwnsSession(bool newState)

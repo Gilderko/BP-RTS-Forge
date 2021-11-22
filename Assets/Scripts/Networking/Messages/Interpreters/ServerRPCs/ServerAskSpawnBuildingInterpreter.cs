@@ -28,6 +28,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 
 			if (player.GetMyBuildings().Count() != castedMessage.BuildingCount)
             {
+				Debug.Log($"Server sice Building count of player {player.GetMyBuildings().Count()} is different from one in message {castedMessage.BuildingCount}");
 				return;
             }
 

@@ -13,9 +13,7 @@ namespace Forge.Networking.Unity.Messages
 		public override IMessageInterpreter Interpreter => SetNewTargetInterpreter.Instance;
 
 		public override void Deserialize(BMSByte buffer)
-		{
-			
-
+		{		
 			EntityId = ForgeSerializer.Instance.Deserialize<int>(buffer);
 			TargetEntityId = ForgeSerializer.Instance.Deserialize<int>(buffer);
 		}

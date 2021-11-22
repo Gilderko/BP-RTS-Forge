@@ -16,6 +16,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
 		{
 			var castedMessage = (UpdateUnitSpawnerQueMessage)message;
+
 			try
             {
 				var unitSpawner = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.EntityId).OwnerGameObject;

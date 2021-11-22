@@ -28,7 +28,6 @@ public class Building : NetworkBehaviour
 
     private void OnDestroy()
     {
-
         if (IsServer)
         {
             ServerOnBuildingDespawned?.Invoke(this);
@@ -38,7 +37,6 @@ public class Building : NetworkBehaviour
         {
             AuthorityOnBuildingDespawned?.Invoke(this);
         }
-
     }
 
     public GameObject GetBuildingPreview()
