@@ -6,6 +6,7 @@ public class Building : NetworkBehaviour
     [SerializeField] private Sprite icon = null;
     [SerializeField] private int price = 100;
     [SerializeField] private GameObject buildingPreview = null;
+    [SerializeField] private string buildingName = "";
 
     public static event Action<Building> ServerOnBuildingSpawned;
     public static event Action<Building> ServerOnBuildingDespawned;
@@ -37,6 +38,11 @@ public class Building : NetworkBehaviour
         {
             AuthorityOnBuildingDespawned?.Invoke(this);
         }
+    }
+
+    public string GetBuildingName()
+    {
+        return buildingName;
     }
 
     public GameObject GetBuildingPreview()

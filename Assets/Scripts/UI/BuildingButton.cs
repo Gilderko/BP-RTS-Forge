@@ -14,6 +14,7 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Image iconMage = null;
     [SerializeField] private TextMeshProUGUI priceText = null;
     [SerializeField] private LayerMask floorMask = new LayerMask();
+    [SerializeField] private TextMeshProUGUI buildingName = null;
 
     [SerializeField] private Color canPlaceColor = new Color();
     [SerializeField] private Color canNotPlaceColor = new Color();
@@ -30,6 +31,7 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
     {
         mainCamera = Camera.main;
         iconMage.sprite = representedBuilding.GetIcon();
+        buildingName.text = representedBuilding.GetBuildingName();
         priceText.text = representedBuilding.GetPrice().ToString();
         buildingCollider = representedBuilding.GetComponent<BoxCollider>();
 

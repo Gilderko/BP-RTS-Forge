@@ -22,12 +22,10 @@ public class Targeter : NetworkBehaviour
         }
     }
 
-
     private void ServerHandleGameOver()
     {
         ClearTarget();
     }
-
 
     public void CmdSetTargetServerRpc(int instanceID)
     {
