@@ -323,7 +323,7 @@ MonoBehaviour:
   floorMask:
     serializedVersion: 2
     m_Bits: 1024
-  buildingName: {fileID: 0}
+  buildingName: {fileID: 2219694469294090459}
   canPlaceColor: {r: 0.40659082, g: 1, b: 0, a: 1}
   canNotPlaceColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &2219694470460996139

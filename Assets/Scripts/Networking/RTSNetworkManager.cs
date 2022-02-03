@@ -70,7 +70,7 @@ public class RTSNetworkManager : MonoBehaviour
     /// <summary>
     /// On server it is server on client it is local client
     /// </summary>
-    public IPlayerSignature gameInstanceOwner;
+    public IPlayerSignature gameInstanceOwner { get => Facade.NetworkMediator.SocketFacade.NetPlayerId; }
 
     public List<RTSPlayer> Players { get; } = new List<RTSPlayer>();
 
@@ -95,8 +95,6 @@ public class RTSNetworkManager : MonoBehaviour
         Facade.NetworkMediator.ChangeEngineProxy(Facade);
         
         Facade.NetworkMediator.StartServer(portNumber, maxPlayers);
-
-        gameInstanceOwner = Facade.NetworkMediator.SocketFacade.NetPlayerId;
     }
 
     public void StartClient(string address, ushort portNumber)
@@ -240,7 +238,6 @@ public class RTSNetworkManager : MonoBehaviour
             spawnExistingPlayer.Green = playerColor.g;
             spawnExistingPlayer.Blue = playerColor.b;
 
-
             Facade.NetworkMediator.SendReliableMessage(spawnExistingPlayer, Facade.NetworkMediator.PlayerRepository.GetPlayer(player));
         }
     }
@@ -342,6 +339,5 @@ public class RTSNetworkManager : MonoBehaviour
     public void ClientSetLocalPlayer(RTSPlayer myPlayer)
     {
         localPlayer = myPlayer;
-        gameInstanceOwner = myPlayer.OwnerSignatureId;
     }
 }

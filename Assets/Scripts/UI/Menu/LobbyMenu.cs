@@ -70,7 +70,7 @@ public class LobbyMenu : MonoBehaviour
     public void StartGame()
     {
         var reqStartMessage = new RequestGameStartMessage();
-        reqStartMessage.PlayerId = RTSNetworkManager.Instance.LocalPlayer.OwnerSignatureId.GetId();
+        reqStartMessage.PlayerId = RTSNetworkManager.Instance.gameInstanceOwner.GetId();
 
         RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(reqStartMessage);
     }

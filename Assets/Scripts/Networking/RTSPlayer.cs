@@ -81,10 +81,9 @@ public class RTSPlayer : NetworkBehaviour
 
         if (IsClient)
         {
-            if (RTSNetworkManager.Instance.Facade.NetworkMediator.SocketFacade.NetPlayerId.Equals(OwnerSignatureId))
+            if (IsOwner)
             {
                 RTSNetworkManager.Instance.ClientSetLocalPlayer(this);
-                ClientSetPlayerOwnsSession(isPartyOwner);
             }
 
             OnStartAuthority();
@@ -318,7 +317,7 @@ public class RTSPlayer : NetworkBehaviour
     {
         isPartyOwner = newState;   
 
-        if (!isPartyOwner)
+        if (!IsOwner)
         {
             return;
         }

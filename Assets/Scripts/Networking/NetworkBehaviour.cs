@@ -7,9 +7,9 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkEntity))]
 public class NetworkBehaviour : MonoBehaviour
 {
-    public NetworkEntity _netEntity = null;
+    private NetworkEntity _netEntity = null;
 
-    public bool IsOwner { get => RTSNetworkManager.Instance.gameInstanceOwner.Equals(OwnerSignatureId); }
+    public bool IsOwner { get => RTSNetworkManager.Instance.Facade.NetworkMediator.SocketFacade.NetPlayerId.Equals(OwnerSignatureId); }
 
     public bool IsServer { get => RTSNetworkManager.Instance.Facade.IsServer; }
 

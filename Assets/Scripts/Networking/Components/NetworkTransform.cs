@@ -9,7 +9,7 @@ public class NetworkTransform : NetworkBehaviour
     // Server variables
     
     [Header("Server config")]
-    [SerializeField] private float UPDATE_INTERVAL = 0.034f;
+    [SerializeField] private float UPDATE_INTERVAL = 0.1f;
 
     private float _updateDelta = 0;
     private MessagePool<TransformUpdateMessage> _msgPool = new MessagePool<TransformUpdateMessage>();
