@@ -183,7 +183,8 @@ public class RTSNetworkManager : MonoBehaviour
     {        
         if (isGameInProgress)
         {
-            // Here I need to find a way to disconnect a person            
+            // Here I need to find a way to disconnect a person
+            Facade.NetworkMediator.PlayerRepository.RemovePlayer(player);
             return;
         }
 

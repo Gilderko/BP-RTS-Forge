@@ -10,6 +10,7 @@ public class Minimap : MonoBehaviour, IPointerDownHandler, IDragHandler
 
     private Transform playerCameraTransform;
 
+#if !UNITY_SERVER
 
     private void Start()
     {
@@ -19,6 +20,7 @@ public class Minimap : MonoBehaviour, IPointerDownHandler, IDragHandler
         }
     }
 
+#endif
 
     private void MoveCamera()
     {

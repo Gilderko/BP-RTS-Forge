@@ -17,6 +17,7 @@ public class UnitFiring : NetworkBehaviour
 
     #region Server
 
+#if UNITY_SERVER
 
     private void Update()
     {
@@ -49,7 +50,7 @@ public class UnitFiring : NetworkBehaviour
 
                 projectileSpawnMessage.Position = projectileSpawnPoint.position;
                 projectileSpawnMessage.Rotation = projectRotation;
-                projectileSpawnMessage.Scale = Vector3.one;
+                projectileSpawnMessage.Scale = projectilePrefab.transform.localScale;
 
                 EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, projectileSpawnMessage);
 
@@ -59,6 +60,8 @@ public class UnitFiring : NetworkBehaviour
             }
         }
     }
+
+#endif
 
     private bool CanFireAtTarget()
     {

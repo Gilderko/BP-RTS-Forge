@@ -36,7 +36,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
         {
             ProduceUnits();
         }
-        if (IsClient)
+        else if (IsClient)
         {
             UpdateTimerDisplay();
         }

@@ -27,6 +27,8 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
 
     private MessagePool<ServerAskSpawnBuildingMessage> spawnBuildAsk = new MessagePool<ServerAskSpawnBuildingMessage>();
 
+#if !UNITY_SERVER
+
     private void Start()
     {
         mainCamera = Camera.main;
@@ -51,6 +53,7 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
         UpdateBuildingPreview();
     }
 
+#endif
 
     private void UpdateBuildingPreview()
     {

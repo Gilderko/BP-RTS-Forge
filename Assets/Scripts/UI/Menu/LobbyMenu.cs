@@ -12,6 +12,7 @@ public class LobbyMenu : MonoBehaviour
     [SerializeField] private RectTransform playerParent;
     [SerializeField] private PlayerLobbyUIInstance playerLobbyUI;
 
+#if !UNITY_SERVER
 
     private void Start()
     {
@@ -26,6 +27,8 @@ public class LobbyMenu : MonoBehaviour
         RTSPlayer.AuthorityOnPartyOwnerChanged -= AuthorityHandlePartyOwnerStateUpdate;
         RTSPlayer.ClientOnInfoUpdated -= ClientHandleInfoUpdated;
     }
+
+#endif
 
     private void AuthorityHandlePartyOwnerStateUpdate(bool state)
     {

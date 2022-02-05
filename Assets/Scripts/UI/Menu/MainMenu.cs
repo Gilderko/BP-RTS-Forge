@@ -7,6 +7,16 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private int maxPlayers = 10;
     [SerializeField] private ushort serverPort;
 
+#if UNITY_SERVER
+
+    private void Start()
+    {
+        HostServerCallback();
+    }
+
+#endif
+
+
     public void HostServerCallback()
     {
         Debug.Log("Started server");

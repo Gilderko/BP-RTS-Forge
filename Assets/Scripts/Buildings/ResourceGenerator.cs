@@ -11,6 +11,8 @@ public class ResourceGenerator : NetworkBehaviour
 
     #region Server
 
+#if UNITY_SERVER
+
     public void Start()
     {
         if (IsServer)
@@ -46,6 +48,8 @@ public class ResourceGenerator : NetworkBehaviour
         }        
     }
 
+#endif
+
 
     private void ServerHandleGameOver()
     {
@@ -56,5 +60,5 @@ public class ResourceGenerator : NetworkBehaviour
     {
         Destroy(gameObject);
     }
-    #endregion
+#endregion
 }

@@ -9,6 +9,8 @@ public class UnitMovement : NetworkBehaviour
 
     #region Server
 
+#if UNITY_SERVER
+
     public void Start()
     {
         if (IsServer)
@@ -23,11 +25,6 @@ public class UnitMovement : NetworkBehaviour
         {
             GameOverHandler.ServerOnGameOver -= ServerHandleGameOverClientRpc;
         }
-    }
-
-    private void ServerHandleGameOverClientRpc()
-    {
-        agent.ResetPath();
     }
 
     private void Update()
@@ -59,6 +56,13 @@ public class UnitMovement : NetworkBehaviour
         }
     }
 
+#endif
+
+    private void ServerHandleGameOverClientRpc()
+    {
+        agent.ResetPath();
+    }
+
     public void CmdMoveServerRpc(Vector3 position)
     {
         targeter.ClearTarget();
@@ -72,5 +76,5 @@ public class UnitMovement : NetworkBehaviour
         agent.SetDestination(position);
     }
 
-    #endregion
+#endregion
 }

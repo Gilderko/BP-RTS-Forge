@@ -17,11 +17,6 @@ public class NetworkTransform : NetworkBehaviour
     // Server variables
 
     // Client variables
-
-    [Header("Client config")]
-    [SerializeField] private float _lerpT = 0.1f;
-    [SerializeField] private float _sLerpT = 0.1f;
-
     private Vector3 _targetPosition = Vector3.zero;
     private Quaternion _targetRotation = Quaternion.identity;
 
@@ -56,8 +51,8 @@ public class NetworkTransform : NetworkBehaviour
         }
         else
         {
-            transform.position = Vector3.Lerp(transform.position, _targetPosition, _lerpT);
-            transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, _sLerpT);
+            transform.position = Vector3.Lerp(transform.position, _targetPosition, UPDATE_INTERVAL);
+            transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, UPDATE_INTERVAL);
         }
     }
 

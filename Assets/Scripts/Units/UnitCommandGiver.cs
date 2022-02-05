@@ -13,7 +13,8 @@ public class UnitCommandGiver : MonoBehaviour
 
     private MessagePool<SetNewTargetMessage> newTargetPool = new MessagePool<SetNewTargetMessage>();
     private MessagePool<SetNewMovePointMessage> newMovePool = new MessagePool<SetNewMovePointMessage>();
-    
+
+#if !UNITY_SERVER
 
     private void Start()
     {
@@ -25,11 +26,6 @@ public class UnitCommandGiver : MonoBehaviour
     private void OnDestroy()
     {
         GameOverHandler.ClientOnGameOver -= ClientHandleGameOver;
-    }
-
-    private void ClientHandleGameOver(string obj)
-    {
-        enabled = false;
     }
 
     private void Update()
@@ -61,6 +57,13 @@ public class UnitCommandGiver : MonoBehaviour
         {
             TryMove(hit.point);
         }
+    }
+
+#endif
+
+    private void ClientHandleGameOver(string obj)
+    {
+        enabled = false;
     }
 
 

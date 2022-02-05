@@ -18,6 +18,25 @@ public class CameraController : NetworkBehaviour
 
     #region Client
 
+#if !UNITY_SERVER
+
+    public void Start()
+    {
+        if (IsOwner)
+        {
+            playerCameraTransform.gameObject.SetActive(true);
+
+            controls = new Controls();
+
+            controls.Player.ZoomCamera.performed += SetPrevScrollInput;
+            controls.Player.ZoomCamera.canceled += SetPrevScrollInput;
+
+            controls.Player.MoveCamera.performed += SetPrevInput;
+            controls.Player.MoveCamera.canceled += SetPrevInput;
+
+            controls.Enable();
+        }
+    }
 
     private void Update()
     {
@@ -28,6 +47,8 @@ public class CameraController : NetworkBehaviour
 
         UpdateCameraPosition();
     }
+
+#endif
 
 
     private void UpdateCameraPosition()
@@ -71,32 +92,14 @@ public class CameraController : NetworkBehaviour
         pos.z = Mathf.Clamp(pos.z, screenZLimits.x, screenZLimits.y);
 
         playerCameraTransform.position = pos;
-    }
-
-    public void Start()
-    {
-        if (IsOwner)
-        {
-            playerCameraTransform.gameObject.SetActive(true);
-
-            controls = new Controls();
-
-            controls.Player.ZoomCamera.performed += SetPrevScrollInput;
-            controls.Player.ZoomCamera.canceled += SetPrevScrollInput;
-
-            controls.Player.MoveCamera.performed += SetPrevInput;
-            controls.Player.MoveCamera.canceled += SetPrevInput;
-
-            controls.Enable();
-        }
-    }
+    }    
 
     private void SetPrevScrollInput(InputAction.CallbackContext ctx)
     {
         prevScrollInput = ctx.ReadValue<float>();
     }
 
-    #endregion
+#endregion
 
     private void SetPrevInput(InputAction.CallbackContext ctx)
     {
