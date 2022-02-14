@@ -10,6 +10,8 @@ public class NetworkTransform : NetworkBehaviour
     
     [Header("Server config")]
     [SerializeField] private float UPDATE_INTERVAL = 0.1f;
+    [SerializeField] private float MIN_POSITION_DELTA = 0.1f;
+    [SerializeField] private float MIN_ROTATION_DELTA = 0.1f;
 
     private float _updateDelta = 0;
     private MessagePool<TransformUpdateMessage> _msgPool = new MessagePool<TransformUpdateMessage>();
@@ -20,12 +22,17 @@ public class NetworkTransform : NetworkBehaviour
     private Vector3 _targetPosition = Vector3.zero;
     private Quaternion _targetRotation = Quaternion.identity;
 
+    private Vector3 _previousPosition = Vector3.zero;
+    private Quaternion _previousRotation = Quaternion.identity;
+
     // Client variables
 
     private void Awake()
     {
         _targetPosition = transform.position;
         _targetRotation = transform.rotation;
+        _previousPosition = transform.position;
+        _previousRotation = transform.rotation;
     }
 
     void Update()
@@ -33,6 +40,12 @@ public class NetworkTransform : NetworkBehaviour
         if (IsServer)
         {
             _updateDelta += Time.deltaTime;
+
+            if ((transform.position - _previousPosition).sqrMagnitude < MIN_POSITION_DELTA * MIN_POSITION_DELTA
+                && Quaternion.Angle(_previousRotation, transform.rotation) < MIN_ROTATION_DELTA)
+            {
+                return;
+            }
 
             if (_updateDelta >= UPDATE_INTERVAL)
             {
@@ -46,8 +59,13 @@ public class NetworkTransform : NetworkBehaviour
 
                 RTSNetworkManager.Instance.Facade.NetworkMediator.SendMessage(transfUpdateMessage);
 
+                Debug.Log("Sending transform update");
+                _previousPosition = transform.position;
+                _previousRotation = transform.rotation;
                 _updateDelta = 0;
             }
+
+            
         }
         else
         {

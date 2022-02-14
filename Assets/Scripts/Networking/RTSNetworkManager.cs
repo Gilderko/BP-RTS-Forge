@@ -155,9 +155,10 @@ public class RTSNetworkManager : MonoBehaviour
                     {
                         index = Random.Range(0, parentToSpawnPoints.childCount);
                         if (!occupiedIndexes.Contains(index))
-
+                        {
                             occupiedIndexes.Add(index);
-                        break;
+                            break;
+                        }
                     }
 
                     SpawnEntityMessage baseSpawnMessage = spawnPool.Get();
