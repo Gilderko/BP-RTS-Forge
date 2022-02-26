@@ -18,7 +18,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 		{
 			var castedMessage = (ServerAskSpawnBuildingMessage)message;
 
-			Debug.Log($"Player {castedMessage.OwnerId} is asking to build a building");
+			//Debug.Log($"Player {castedMessage.OwnerId} is asking to build a building");
 
 			var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.OwnerId.GetId());
 			if (player == null)

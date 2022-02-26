@@ -400,7 +400,7 @@ public class RTSPlayer : NetworkBehaviour
             Quaternion.identity,
             buildingBlockCollisionLayer))
         {
-            Debug.Log($"Physics problem place building {OwnerClientIntId}");
+            //Debug.Log($"Physics problem place building {OwnerClientIntId}");
             return false;
         }
 
@@ -414,7 +414,7 @@ public class RTSPlayer : NetworkBehaviour
                 bool hasAuth = IsClient ? possibleUnit.IsOwner : possibleUnit.OwnerClientIntId == OwnerClientIntId;
                 if (!hasAuth)
                 {
-                    Debug.Log($"Too close to enemy {OwnerClientIntId}");
+                    //Debug.Log($"Too close to enemy {OwnerClientIntId}");
                     return false;
                 }
             }
@@ -425,7 +425,7 @@ public class RTSPlayer : NetworkBehaviour
                 bool hasAuth = IsClient ? possibleBuilding.IsOwner : possibleBuilding.OwnerClientIntId == OwnerClientIntId;
                 if (!hasAuth)
                 {
-                    Debug.Log($"Too close to enemy build {OwnerClientIntId}");
+                    //Debug.Log($"Too close to enemy build {OwnerClientIntId}");
                     return false;
                 }
             }
@@ -435,12 +435,12 @@ public class RTSPlayer : NetworkBehaviour
         {
             if ((positionToSpawn - build.transform.position).sqrMagnitude <= buildingRangeLimit * buildingRangeLimit)
             {
-                Debug.Log($"Close to my enough {OwnerClientIntId}");
+                //Debug.Log($"Close to my enough {OwnerClientIntId}");
                 return true;
             }
         }
 
-        Debug.Log($"Not close enough to my {OwnerClientIntId}");
+        //Debug.Log($"Not close enough to my {OwnerClientIntId}");
         return false;
     }
 

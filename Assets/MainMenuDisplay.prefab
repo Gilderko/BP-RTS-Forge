@@ -2867,7 +2867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   landingPagePanel: {fileID: 4020596208120688248}
-  maxPlayers: 10
+  maxPlayers: 50
   serverPort: 6666
 --- !u!1 &4020596209981356110
 GameObject:

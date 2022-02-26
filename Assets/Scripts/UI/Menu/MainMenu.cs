@@ -4,7 +4,7 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject landingPagePanel = null;
 
-    [SerializeField] private int maxPlayers = 10;
+    [SerializeField] private int maxPlayers = 50;
     [SerializeField] private ushort serverPort;
 
 #if UNITY_SERVER

@@ -272,9 +272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sceneIdentifier: bb479322-2a3d-4fea-931f-832e240b9e24
-  _sceneIndex: 0
   _prefabId: -3
-  _entityId: 0
+  _sceneIndex: 0
 --- !u!114 &-4540662249400586262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,9 +286,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7afeff578ec928c449e21ef5418c6973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UPDATE_INTERVAL: 0.05
-  _lerpT: 0.1
-  _sLerpT: 0.1
+  UPDATE_INTERVAL: 0.1
+  MIN_POSITION_DELTA: 0.1
+  MIN_ROTATION_DELTA: 0.1
 --- !u!1 &6212448975436108531
 GameObject:
   m_ObjectHideFlags: 0

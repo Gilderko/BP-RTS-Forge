@@ -59,7 +59,6 @@ public class NetworkTransform : NetworkBehaviour
 
                 RTSNetworkManager.Instance.Facade.NetworkMediator.SendMessage(transfUpdateMessage);
 
-                Debug.Log("Sending transform update");
                 _previousPosition = transform.position;
                 _previousRotation = transform.rotation;
                 _updateDelta = 0;

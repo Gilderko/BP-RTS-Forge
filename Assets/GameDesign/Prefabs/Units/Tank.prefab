@@ -88,6 +88,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4540662249400586262, guid: e9f000bf4d8860d46b62c922f7f3441c, type: 3}
+      propertyPath: UPDATE_INTERVAL
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1655600001376980371, guid: e9f000bf4d8860d46b62c922f7f3441c, type: 3}
       propertyPath: _prefabId
       value: 6
