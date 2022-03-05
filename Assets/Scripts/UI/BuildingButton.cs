@@ -74,8 +74,6 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
                 spawnBuildMessage.PosY = hit.point.y;
                 spawnBuildMessage.PosZ = hit.point.z;
 
-                spawnBuildMessage.BuildingCount = player.GetMyBuildings().Count();
-
                 RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
             }
 

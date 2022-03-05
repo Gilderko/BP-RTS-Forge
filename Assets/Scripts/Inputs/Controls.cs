@@ -33,6 +33,38 @@ public class @Controls : IInputActionCollection, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""SendUnits"",
+                    ""type"": ""Button"",
+                    ""id"": ""92531ab5-5d38-45b0-a856-027ae5e66527"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""SpawnUnit"",
+                    ""type"": ""Button"",
+                    ""id"": ""8ca9daad-4502-4d8d-b84c-41650bd2eaaf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""BuildSpawner"",
+                    ""type"": ""Button"",
+                    ""id"": ""6451432a-3f7f-4ba2-8ab8-48244a9b7739"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""BuildMine"",
+                    ""type"": ""Button"",
+                    ""id"": ""642a5834-977b-4c63-b6b2-cf50d3e87708"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -148,6 +180,50 @@ public class @Controls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""954f59d0-11b3-46be-be3f-71715df1e5cb"",
+                    ""path"": ""<Keyboard>/numpad1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & mouse"",
+                    ""action"": ""BuildMine"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4b262ded-9136-4a2a-a5a0-d3f1fabfbd99"",
+                    ""path"": ""<Keyboard>/numpad2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & mouse"",
+                    ""action"": ""BuildSpawner"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f53b348f-c14f-4e06-b5a5-cbc3910ae8cd"",
+                    ""path"": ""<Keyboard>/numpad3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & mouse"",
+                    ""action"": ""SpawnUnit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d696207d-3e8a-448f-8205-8266a47b25e8"",
+                    ""path"": ""<Keyboard>/numpad4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard & mouse"",
+                    ""action"": ""SendUnits"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""42e35d04-5adb-48ee-b6de-182c6b2f9ee8"",
                     ""path"": ""<Mouse>/scroll/y"",
                     ""interactions"": """",
@@ -183,6 +259,10 @@ public class @Controls : IInputActionCollection, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_MoveCamera = m_Player.FindAction("Move Camera", throwIfNotFound: true);
         m_Player_ZoomCamera = m_Player.FindAction("Zoom Camera", throwIfNotFound: true);
+        m_Player_SendUnits = m_Player.FindAction("SendUnits", throwIfNotFound: true);
+        m_Player_SpawnUnit = m_Player.FindAction("SpawnUnit", throwIfNotFound: true);
+        m_Player_BuildSpawner = m_Player.FindAction("BuildSpawner", throwIfNotFound: true);
+        m_Player_BuildMine = m_Player.FindAction("BuildMine", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -234,12 +314,20 @@ public class @Controls : IInputActionCollection, IDisposable
     private IPlayerActions m_PlayerActionsCallbackInterface;
     private readonly InputAction m_Player_MoveCamera;
     private readonly InputAction m_Player_ZoomCamera;
+    private readonly InputAction m_Player_SendUnits;
+    private readonly InputAction m_Player_SpawnUnit;
+    private readonly InputAction m_Player_BuildSpawner;
+    private readonly InputAction m_Player_BuildMine;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
         public PlayerActions(@Controls wrapper) { m_Wrapper = wrapper; }
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
         public InputAction @ZoomCamera => m_Wrapper.m_Player_ZoomCamera;
+        public InputAction @SendUnits => m_Wrapper.m_Player_SendUnits;
+        public InputAction @SpawnUnit => m_Wrapper.m_Player_SpawnUnit;
+        public InputAction @BuildSpawner => m_Wrapper.m_Player_BuildSpawner;
+        public InputAction @BuildMine => m_Wrapper.m_Player_BuildMine;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -255,6 +343,18 @@ public class @Controls : IInputActionCollection, IDisposable
                 @ZoomCamera.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoomCamera;
                 @ZoomCamera.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoomCamera;
                 @ZoomCamera.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnZoomCamera;
+                @SendUnits.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSendUnits;
+                @SendUnits.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSendUnits;
+                @SendUnits.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSendUnits;
+                @SpawnUnit.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpawnUnit;
+                @SpawnUnit.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpawnUnit;
+                @SpawnUnit.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpawnUnit;
+                @BuildSpawner.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBuildSpawner;
+                @BuildSpawner.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBuildSpawner;
+                @BuildSpawner.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBuildSpawner;
+                @BuildMine.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBuildMine;
+                @BuildMine.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBuildMine;
+                @BuildMine.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBuildMine;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -265,6 +365,18 @@ public class @Controls : IInputActionCollection, IDisposable
                 @ZoomCamera.started += instance.OnZoomCamera;
                 @ZoomCamera.performed += instance.OnZoomCamera;
                 @ZoomCamera.canceled += instance.OnZoomCamera;
+                @SendUnits.started += instance.OnSendUnits;
+                @SendUnits.performed += instance.OnSendUnits;
+                @SendUnits.canceled += instance.OnSendUnits;
+                @SpawnUnit.started += instance.OnSpawnUnit;
+                @SpawnUnit.performed += instance.OnSpawnUnit;
+                @SpawnUnit.canceled += instance.OnSpawnUnit;
+                @BuildSpawner.started += instance.OnBuildSpawner;
+                @BuildSpawner.performed += instance.OnBuildSpawner;
+                @BuildSpawner.canceled += instance.OnBuildSpawner;
+                @BuildMine.started += instance.OnBuildMine;
+                @BuildMine.performed += instance.OnBuildMine;
+                @BuildMine.canceled += instance.OnBuildMine;
             }
         }
     }
@@ -282,5 +394,9 @@ public class @Controls : IInputActionCollection, IDisposable
     {
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnZoomCamera(InputAction.CallbackContext context);
+        void OnSendUnits(InputAction.CallbackContext context);
+        void OnSpawnUnit(InputAction.CallbackContext context);
+        void OnBuildSpawner(InputAction.CallbackContext context);
+        void OnBuildMine(InputAction.CallbackContext context);
     }
 }

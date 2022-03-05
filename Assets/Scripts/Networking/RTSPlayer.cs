@@ -233,44 +233,59 @@ public class RTSPlayer : NetworkBehaviour
 
     public void CmdTryPlaceBuildingServerRpc(int buildingID, Vector3 positionToSpawn)
     {
-        lock (buildingLock)
+        Building buildingToPlace = buildings.First(build => build.GetComponent<NetworkEntity>().PrefabId == buildingID);
+
+        if (buildingToPlace == null)
         {
-            Building buildingToPlace = buildings.First(build => build.GetComponent<NetworkEntity>().PrefabId == buildingID);
-
-            if (buildingToPlace == null)
-            {
-                return;
-            }
-
-            if (resources < buildingToPlace.GetPrice())
-            {
-                Debug.Log("Not enough cash");
-                return;
-            }
-
-            BoxCollider buildingCollider = buildingToPlace.GetComponent<BoxCollider>();
-
-            if (!CanPlaceBuilding(buildingCollider, positionToSpawn))
-            {
-                Debug.Log($"Cant place building {OwnerClientIntId}");
-                return;
-            }
-
-            var spawnBuildMessage = spawnPool.Get();
-            spawnBuildMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
-            spawnBuildMessage.OwnerId = OwnerSignatureId;
-            spawnBuildMessage.PrefabId = buildingToPlace.GetComponent<NetworkEntity>().PrefabId;
-
-            spawnBuildMessage.Position = positionToSpawn;
-            spawnBuildMessage.Rotation = Quaternion.identity;
-            spawnBuildMessage.Scale = Vector3.one;
-
-            EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, spawnBuildMessage);
-
-            RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
-
-            ServerAddResources(-buildingToPlace.GetPrice());
+            return;
         }
+
+        if (resources < buildingToPlace.GetPrice())
+        {
+            //Debug.Log("Not enough cash");
+            return;
+        }
+
+        BoxCollider buildingCollider = buildingToPlace.GetComponent<BoxCollider>();
+
+        if (!CanPlaceBuilding(buildingCollider, positionToSpawn))
+        {
+            //Debug.Log($"Cant place building {OwnerClientIntId}");
+            return;
+        }
+
+        var spawnBuildMessage = spawnPool.Get();
+        spawnBuildMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
+        spawnBuildMessage.OwnerId = OwnerSignatureId;
+        spawnBuildMessage.PrefabId = buildingToPlace.GetComponent<NetworkEntity>().PrefabId;
+
+        spawnBuildMessage.Position = positionToSpawn;
+        spawnBuildMessage.Rotation = Quaternion.identity;
+        spawnBuildMessage.Scale = RTSNetworkManager.Instance.Facade.PrefabManager.GetPrefabById(buildingID).localScale;
+
+        EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, spawnBuildMessage);
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
+
+        ServerAddResources(-buildingToPlace.GetPrice());
+    }
+
+    public void ForcePlaceBuildingServerRPc(int buildingID, Vector3 positionToSpawn)
+    {
+        Building buildingToPlace = buildings.First(build => build.GetComponent<NetworkEntity>().PrefabId == buildingID);
+
+        var spawnBuildMessage = spawnPool.Get();
+        spawnBuildMessage.Id = RTSNetworkManager.Instance.ServerGetNewEntityId();
+        spawnBuildMessage.OwnerId = OwnerSignatureId;
+        spawnBuildMessage.PrefabId = buildingToPlace.GetComponent<NetworkEntity>().PrefabId;
+
+        spawnBuildMessage.Position = positionToSpawn;
+        spawnBuildMessage.Rotation = Quaternion.identity;
+        spawnBuildMessage.Scale = RTSNetworkManager.Instance.Facade.PrefabManager.GetPrefabById(buildingID).localScale;
+
+        EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, spawnBuildMessage);
+
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnBuildMessage);
     }
 
     #endregion

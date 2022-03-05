@@ -26,12 +26,6 @@ namespace Forge.Networking.Unity.Messages.Interpreters
 				return;
             }
 
-			if (player.GetMyBuildings().Count() != castedMessage.BuildingCount)
-            {
-				Debug.Log($"Server sice Building count of player {player.GetMyBuildings().Count()} is different from one in message {castedMessage.BuildingCount}");
-				return;
-            }
-
 			player.CmdTryPlaceBuildingServerRpc(castedMessage.PrefabId, new Vector3(castedMessage.PosX, castedMessage.PosY, castedMessage.PosZ));
 		}
 	}

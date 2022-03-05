@@ -5,8 +5,8 @@ using Forge.Serialization;
 
 namespace Forge.Networking.Unity.Messages
 {
-	[EngineMessageContract(35, typeof(ServerAskSpawnBuildingMessage))]
-	public class ServerAskSpawnBuildingMessage : ForgeMessage
+	[EngineMessageContract(41, typeof(ForceBuildServerMessage))]
+	public class ForceBuildServerMessage : ForgeMessage
 	{
 		public IPlayerSignature OwnerId { get; set; }
 
@@ -14,11 +14,13 @@ namespace Forge.Networking.Unity.Messages
 		public float PosX { get; set; }
 		public float PosY { get; set; }
 		public float PosZ { get; set; }
+		public int RequestId { get; set; }
 
-		public override IMessageInterpreter Interpreter => ServerAskSpawnBuildingInterpreter.Instance;
+		public override IMessageInterpreter Interpreter => ForceBuildServerInterpreter.Instance;
 
 		public override void Deserialize(BMSByte buffer)
-		{	
+		{
+			RequestId = ForgeSerializer.Instance.Deserialize<int>(buffer);
 			OwnerId = ForgeSerializer.Instance.Deserialize<IPlayerSignature>(buffer);
 			PrefabId = ForgeSerializer.Instance.Deserialize<int>(buffer);
 			PosX = ForgeSerializer.Instance.Deserialize<float>(buffer);
@@ -28,6 +30,7 @@ namespace Forge.Networking.Unity.Messages
 
 		public override void Serialize(BMSByte buffer)
 		{
+			ForgeSerializer.Instance.Serialize(RequestId, buffer);
 			ForgeSerializer.Instance.Serialize(OwnerId, buffer);
 			ForgeSerializer.Instance.Serialize(PrefabId, buffer);
 			ForgeSerializer.Instance.Serialize(PosX, buffer);

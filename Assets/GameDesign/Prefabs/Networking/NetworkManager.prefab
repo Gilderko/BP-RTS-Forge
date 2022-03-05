@@ -49,6 +49,7 @@ MonoBehaviour:
   playerBase: {fileID: -8850996560325820486, guid: 15e90b0019d52b34d98aa4678a1a18a6, type: 3}
   gameOverHandler: {fileID: 1273161702178869714, guid: 51225ebfc2af578448f3b05f4bdfd2ec, type: 3}
   forgeEngineFacade: {fileID: 371965343}
+  commander: {fileID: 1052321973956350301, guid: b754013117b3155488ccae9231c1a48c, type: 3}
 --- !u!114 &371965343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,4 +64,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sceneToLoad: 
   _sceneToDisconnectTo: 
-  _prefabManager: {fileID: 11400000, guid: 199a06a8e37c3784fbfd739f9ffeb3ec, type: 2}
+  _prefabManager: {fileID: 0}

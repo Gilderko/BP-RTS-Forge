@@ -23,7 +23,8 @@ public class RTSNetworkManager : MonoBehaviour
 
     [SerializeField] private UnitBase playerBase = null;
     [SerializeField] private GameOverHandler gameOverHandler = null;
-    [SerializeField] private ForgeEngineFacade forgeEngineFacade = null;       
+    [SerializeField] private ForgeEngineFacade forgeEngineFacade = null;
+    [SerializeField] private Commander commander = null;
 
     // Singleton pattern
 
@@ -142,6 +143,19 @@ public class RTSNetworkManager : MonoBehaviour
                 EntitySpawner.SpawnEntityFromMessage(Facade, spawnMessage);
 
                 Facade.NetworkMediator.SendReliableMessage(spawnMessage);
+
+                SpawnEntityMessage spawnCommander = spawnPool.Get();
+                spawnCommander.Id = ServerGetNewEntityId();
+                spawnCommander.OwnerId = gameInstanceOwner;
+                spawnCommander.PrefabId = commander.GetComponent<NetworkEntity>().PrefabId;
+
+                spawnCommander.Position = Vector3.zero;
+                spawnCommander.Rotation = Quaternion.identity;
+                spawnCommander.Scale = Vector3.one;
+
+                EntitySpawner.SpawnEntityFromMessage(Facade, spawnCommander);
+
+                Facade.NetworkMediator.SendReliableMessage(spawnCommander);
 
                 Transform parentToSpawnPoints = GameObject.FindGameObjectWithTag("SpawnPoints").transform;
 
