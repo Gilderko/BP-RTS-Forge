@@ -79,6 +79,7 @@ public class RTSNetworkManager : MonoBehaviour
     private void Awake()
     {        
         instance = this;
+        Application.quitting += () => Facade.ShutDown();
     }
 
     /// <summary>

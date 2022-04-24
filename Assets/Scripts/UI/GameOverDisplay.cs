@@ -22,14 +22,7 @@ public class GameOverDisplay : MonoBehaviour
 
     public void LeaveGame()
     {
-        if (RTSNetworkManager.Instance.IsServer)
-        {
-            RTSNetworkManager.Instance.Facade.ShutDown();
-        }
-        else if (RTSNetworkManager.Instance.IsClient)
-        {
-            RTSNetworkManager.Instance.Facade.ShutDown();
-        }
+        Application.Quit();
     }
 
     private void ClientHandleGameOver(string playerName)
