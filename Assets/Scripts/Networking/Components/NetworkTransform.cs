@@ -1,13 +1,14 @@
 using Forge.Networking.Messaging;
 using Forge.Networking.Unity.Messages;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Custom implementation with the help from an existing NetworkTransform
+/// </summary>
 public class NetworkTransform : NetworkBehaviour
 {
     // Server variables
-    
+
     [Header("Server config")]
     [SerializeField] private float UPDATE_INTERVAL = 0.1f;
     [SerializeField] private float MIN_POSITION_DELTA = 0.1f;
@@ -35,7 +36,7 @@ public class NetworkTransform : NetworkBehaviour
         _previousRotation = transform.rotation;
     }
 
-    void Update()
+    private void Update()
     {
         if (IsServer)
         {
@@ -63,8 +64,6 @@ public class NetworkTransform : NetworkBehaviour
                 _previousRotation = transform.rotation;
                 _updateDelta = 0;
             }
-
-            
         }
         else
         {

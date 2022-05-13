@@ -1,29 +1,26 @@
-using System;
-using System.Net;
 using Forge.Networking.Messaging;
-using Forge.Networking.Sockets;
-using UnityEngine;
+using System.Net;
 
 namespace Forge.Networking.Unity.Messages.Interpreters
 {
-	public class ChangePlayerNameInterpreter : IMessageInterpreter
-	{
-		public static ChangePlayerNameInterpreter Instance { get; private set; } = new ChangePlayerNameInterpreter();
+    public class ChangePlayerNameInterpreter : IMessageInterpreter
+    {
+        public static ChangePlayerNameInterpreter Instance { get; private set; } = new ChangePlayerNameInterpreter();
 
-		public bool ValidOnClient => true;
-		public bool ValidOnServer => false;
+        public bool ValidOnClient => true;
+        public bool ValidOnServer => false;
 
-		public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
-		{
-			var castedMessage = (ChangePlayerNameMessage)message;
+        public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
+        {
+            var castedMessage = (ChangePlayerNameMessage)message;
 
-			var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.PlayerId);
-			if (player == null)
+            var player = RTSNetworkManager.Instance.GetRTSPlayerById(castedMessage.PlayerId);
+            if (player == null)
             {
-				return;
+                return;
             }
 
-			player.ClientSetNewPlayerName(castedMessage.NewPlayerName);
-		}
-	}
+            player.ClientSetNewPlayerName(castedMessage.NewPlayerName);
+        }
+    }
 }

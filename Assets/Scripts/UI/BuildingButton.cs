@@ -8,6 +8,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+/// <summary>
+/// Component that stores which building it is supposed to represent. Takes care of updating the preview and asking the server to spawn the building.
+/// </summary>
 public class BuildingButton : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Building representedBuilding = null;
@@ -25,6 +28,7 @@ public class BuildingButton : MonoBehaviour, IPointerClickHandler
     private GameObject buildingPreviewInstance;
     private Renderer buildingRendererInstance;
 
+    // Pool for requests for spawning buildings
     private MessagePool<ServerAskSpawnBuildingMessage> spawnBuildAsk = new MessagePool<ServerAskSpawnBuildingMessage>();
 
 #if !UNITY_SERVER

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Component that handles current enemy target that the GameObject should attack.
+/// </summary>
 public class Targeter : NetworkBehaviour
 {
     [SerializeField] private Targetable target;

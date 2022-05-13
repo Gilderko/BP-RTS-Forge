@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Basic camera contoller works with keyboard and mouse. Works offline and instantiated with player to move the cinemachine camera.
+/// </summary>
 public class CameraController : NetworkBehaviour
 {
     [SerializeField] private Transform playerCameraTransform = null;
@@ -50,7 +53,6 @@ public class CameraController : NetworkBehaviour
 
 #endif
 
-
     private void UpdateCameraPosition()
     {
         Vector3 pos = playerCameraTransform.position;
@@ -92,14 +94,14 @@ public class CameraController : NetworkBehaviour
         pos.z = Mathf.Clamp(pos.z, screenZLimits.x, screenZLimits.y);
 
         playerCameraTransform.position = pos;
-    }    
+    }
 
     private void SetPrevScrollInput(InputAction.CallbackContext ctx)
     {
         prevScrollInput = ctx.ReadValue<float>();
     }
 
-#endregion
+    #endregion
 
     private void SetPrevInput(InputAction.CallbackContext ctx)
     {

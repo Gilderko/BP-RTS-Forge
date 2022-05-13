@@ -5,21 +5,21 @@ using Forge.Serialization;
 
 namespace Forge.Networking.Unity.Messages
 {
-	[EngineMessageContract(37, typeof(PlayerObjectRequestMessage))]
-	public class PlayerObjectRequestMessage : ForgeMessage
-	{
-		public IPlayerSignature RequestingPlayer { get; set; }
+    [EngineMessageContract(37, typeof(PlayerObjectRequestMessage))]
+    public class PlayerObjectRequestMessage : ForgeMessage
+    {
+        public IPlayerSignature RequestingPlayer { get; set; }
 
-		public override IMessageInterpreter Interpreter => PlayerObjectRequestInterpreter.Instance;
+        public override IMessageInterpreter Interpreter => PlayerObjectRequestInterpreter.Instance;
 
-		public override void Deserialize(BMSByte buffer)
-		{
-			RequestingPlayer = ForgeSerializer.Instance.Deserialize<IPlayerSignature>(buffer);			
-		}
+        public override void Deserialize(BMSByte buffer)
+        {
+            RequestingPlayer = ForgeSerializer.Instance.Deserialize<IPlayerSignature>(buffer);
+        }
 
-		public override void Serialize(BMSByte buffer)
-		{
-			ForgeSerializer.Instance.Serialize(RequestingPlayer, buffer);
-		}
-	}
+        public override void Serialize(BMSByte buffer)
+        {
+            ForgeSerializer.Instance.Serialize(RequestingPlayer, buffer);
+        }
+    }
 }

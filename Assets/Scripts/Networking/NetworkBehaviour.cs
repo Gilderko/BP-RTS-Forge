@@ -1,12 +1,15 @@
 ﻿using Forge.Networking.Players;
 using Forge.Networking.Unity;
-using System;
 using UnityEngine;
 
-// Needs to be implemented with the Entity stuff from Forge
+
+/// <summary>
+/// Custom implementation of NetworkBehaviours to resemble the implementation of the NetworkBehaviour of both Mirror or Netcode.
+/// </summary>
 [RequireComponent(typeof(NetworkEntity))]
 public class NetworkBehaviour : MonoBehaviour
 {
+    // The entity is set in runtime by the EntitySpawner
     private NetworkEntity _netEntity = null;
 
     public bool IsOwner { get => RTSNetworkManager.Instance.Facade.NetworkMediator.SocketFacade.NetPlayerId.Equals(OwnerSignatureId); }

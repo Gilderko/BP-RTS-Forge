@@ -1,9 +1,11 @@
 using Forge.Networking.Messaging;
-using Forge.Networking.Unity;
 using Forge.Networking.Unity.Messages;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Handles setting commands on the client and then calling the RPCs on the server to perform requested actions.
+/// </summary>
 public class UnitCommandGiver : MonoBehaviour
 {
     [SerializeField] private UnitSelectionHandler unitSelectionHandler = null;
@@ -11,6 +13,7 @@ public class UnitCommandGiver : MonoBehaviour
 
     private Camera mainCamera;
 
+    // Message pools for changing targets
     private MessagePool<SetNewTargetMessage> newTargetPool = new MessagePool<SetNewTargetMessage>();
     private MessagePool<SetNewMovePointMessage> newMovePool = new MessagePool<SetNewMovePointMessage>();
 

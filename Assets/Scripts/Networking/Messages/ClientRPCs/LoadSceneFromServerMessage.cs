@@ -4,25 +4,25 @@ using Forge.Serialization;
 
 namespace Forge.Networking.Unity.Messages
 {
-	[EngineMessageContract(21, typeof(LoadSceneFromServerMessage))]
-	public class LoadSceneFromServerMessage : ForgeMessage
-	{
-		public string SceneName { get; set; }
+    [EngineMessageContract(21, typeof(LoadSceneFromServerMessage))]
+    public class LoadSceneFromServerMessage : ForgeMessage
+    {
+        public string SceneName { get; set; }
 
-		public override IMessageInterpreter Interpreter => LoadSceneFromServerInterpreter.Instance;
+        public override IMessageInterpreter Interpreter => LoadSceneFromServerInterpreter.Instance;
 
-		public override void Deserialize(BMSByte buffer)
-		{
-			
+        public override void Deserialize(BMSByte buffer)
+        {
 
-			SceneName = ForgeSerializer.Instance.Deserialize<string>(buffer);	
-		}
 
-		public override void Serialize(BMSByte buffer)
-		{
-			
+            SceneName = ForgeSerializer.Instance.Deserialize<string>(buffer);
+        }
 
-			ForgeSerializer.Instance.Serialize(SceneName, buffer);
-		}
-	}
+        public override void Serialize(BMSByte buffer)
+        {
+
+
+            ForgeSerializer.Instance.Serialize(SceneName, buffer);
+        }
+    }
 }

@@ -4,26 +4,26 @@ using Forge.Serialization;
 
 namespace Forge.Networking.Unity.Messages
 {
-	[EngineMessageContract(33, typeof(RequestGameStartMessage))]
-	public class RequestGameStartMessage : ForgeMessage
-	{
-		public int PlayerId { get; set; }
+    [EngineMessageContract(33, typeof(RequestGameStartMessage))]
+    public class RequestGameStartMessage : ForgeMessage
+    {
+        public int PlayerId { get; set; }
 
-		public override IMessageInterpreter Interpreter => RequestGameStartInterpreter.Instance;
+        public override IMessageInterpreter Interpreter => RequestGameStartInterpreter.Instance;
 
-		public override void Deserialize(BMSByte buffer)
-		{
-			
+        public override void Deserialize(BMSByte buffer)
+        {
 
-			PlayerId = ForgeSerializer.Instance.Deserialize<int>(buffer);
-		}
 
-		public override void Serialize(BMSByte buffer)
-		{
+            PlayerId = ForgeSerializer.Instance.Deserialize<int>(buffer);
+        }
 
-			
+        public override void Serialize(BMSByte buffer)
+        {
 
-			ForgeSerializer.Instance.Serialize(PlayerId, buffer);
-		}
-	}
+
+
+            ForgeSerializer.Instance.Serialize(PlayerId, buffer);
+        }
+    }
 }

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// Takes care of setting the path of the NavMeshAgent on the server bases on the target or the command to move to a certain place.
+/// </summary>
 public class UnitMovement : NetworkBehaviour
 {
     [SerializeField] private NavMeshAgent agent = null;
@@ -8,8 +11,6 @@ public class UnitMovement : NetworkBehaviour
     [SerializeField] private float chaseRange = 10f;
 
     #region Server
-
-#if UNITY_SERVER
 
     public void Start()
     {
@@ -26,6 +27,8 @@ public class UnitMovement : NetworkBehaviour
             GameOverHandler.ServerOnGameOver -= ServerHandleGameOverClientRpc;
         }
     }
+
+#if UNITY_SERVER
 
     private void Update()
     {
@@ -76,5 +79,5 @@ public class UnitMovement : NetworkBehaviour
         agent.SetDestination(position);
     }
 
-#endregion
+    #endregion
 }
