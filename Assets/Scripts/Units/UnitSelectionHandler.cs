@@ -1,8 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Handles unit selection on the client.
+/// </summary>
 public class UnitSelectionHandler : MonoBehaviour
 {
     [SerializeField] private RectTransform unitSelectionArea = null;
@@ -53,7 +55,6 @@ public class UnitSelectionHandler : MonoBehaviour
         }
         else if (Mouse.current.leftButton.isPressed)
         {
-            //Debug.Log("Is pressed");
             UpdateSelectionArea();
         }
     }
@@ -136,8 +137,6 @@ public class UnitSelectionHandler : MonoBehaviour
         {
             Vector2 min = unitSelectionArea.anchoredPosition - unitSelectionArea.sizeDelta / 2;
             Vector2 max = unitSelectionArea.anchoredPosition + unitSelectionArea.sizeDelta / 2;
-
-            //Debug.Log($"You have amount of units {player.GetMyUnits().Count()}");
 
             foreach (Unit unit in player.GetMyUnits())
             {

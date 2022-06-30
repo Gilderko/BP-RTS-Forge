@@ -1,7 +1,12 @@
 using Forge.Networking.Unity.Messages;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
+/// <summary>
+/// Handles what happens when the last player base is despawned. Can include logic specific for both the server and the client.
+/// </summary>
 public class GameOverHandler : NetworkBehaviour
 {
     public static event Action ServerOnGameOver;
@@ -11,6 +16,7 @@ public class GameOverHandler : NetworkBehaviour
     public static event Action<string> ClientOnGameOver;
 
     private bool hasClientAnnounced = false;
+
     #region Server
 
     private void Start()
@@ -49,6 +55,15 @@ public class GameOverHandler : NetworkBehaviour
         ServerSendGameOverMessage(winnerIndex);
 
         ServerOnGameOver?.Invoke();
+
+        StartCoroutine(DelayedQuit(5));
+    }
+
+    private IEnumerator DelayedQuit(float timer)
+    {
+        yield return new WaitForSeconds(timer);
+
+        Application.Quit();
     }
 
     private void ServerSendGameOverMessage(int winnerIndex)

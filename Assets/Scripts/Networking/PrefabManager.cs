@@ -1,11 +1,10 @@
 using Forge.Networking.Unity;
-using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
+/// <summary>
+/// Prefab manager allows to get prefabs by Id in order to Instantiate them over the network.
+/// </summary>
 [CreateAssetMenu(fileName = "RTSForgeNetworking",
     menuName = "RTS/Scriptable Objects/PrefabManager", order = 1)]
 public class PrefabManager : ScriptableObject, IPrefabManager

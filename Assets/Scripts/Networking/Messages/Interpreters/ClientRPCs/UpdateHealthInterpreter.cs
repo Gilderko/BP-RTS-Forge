@@ -13,7 +13,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
         public void Interpret(INetworkMediator netMediator, EndPoint sender, IMessage message)
         {
             var castedMessage = (UpdateHealthMessage)message;
-            
+
             try
             {
                 var entity = ((IEngineFacade)netMediator.EngineProxy).EntityRepository.Get(castedMessage.EntityID);
@@ -22,7 +22,7 @@ namespace Forge.Networking.Unity.Messages.Interpreters
             catch (EntityNotFoundException)
             {
                 return;
-            }            
+            }
         }
     }
 }

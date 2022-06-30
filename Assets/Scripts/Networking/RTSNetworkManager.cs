@@ -10,6 +10,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// The core component of this game. Works as a singleton and a wrapper around the EngineFacade.
+/// 
+/// Stores the players and handles logic related to new player connecting and disconnecting + starting the game.
+/// </summary>
 public class RTSNetworkManager : MonoBehaviour
 {
     public RTSPlayer LocalPlayer { get => localPlayer; }
@@ -24,7 +29,6 @@ public class RTSNetworkManager : MonoBehaviour
     [SerializeField] private UnitBase playerBase = null;
     [SerializeField] private GameOverHandler gameOverHandler = null;
     [SerializeField] private ForgeEngineFacade forgeEngineFacade = null;
-    [SerializeField] private Commander commander = null;
 
     // Singleton pattern
 
@@ -42,7 +46,7 @@ public class RTSNetworkManager : MonoBehaviour
         }
     }
 
-    // Singleton pattern
+    // End of singleton pattern
 
     // Client variables    
 
@@ -54,7 +58,7 @@ public class RTSNetworkManager : MonoBehaviour
     private readonly object isLoadingLock = new object();
     private bool hadLoaded = false;
 
-    // Client variables
+    // End of client variables
 
     // Server variables
 
@@ -64,37 +68,34 @@ public class RTSNetworkManager : MonoBehaviour
 
     private bool isGameInProgress = false;
 
-    // Server variables
+    // End of server variables
 
     // Variables Client and Server
 
-    /// <summary>
-    /// On server it is server on client it is local client
-    /// </summary>
+    // On server it is server on client it is local client
     public IPlayerSignature gameInstanceOwner { get => Facade.NetworkMediator.SocketFacade.NetPlayerId; }
 
     public List<RTSPlayer> Players { get; } = new List<RTSPlayer>();
 
-    // Variable Client and Server
+    // End of variable Client and Server
 
     private void Awake()
-    {        
+    {
         instance = this;
+        Application.quitting += () => Facade.ShutDown();
     }
 
-    /// <summary>
-    /// Here I need to do all the network starting stuff
-    /// </summary>
+    // Here I need to do all the network starting
     public void StartServer(ushort portNumber, int maxPlayers)
     {
         var factory = AbstractFactory.Get<INetworkTypeFactory>();
-        Facade.NetworkMediator = factory.GetNew<INetworkMediator>();        
+        Facade.NetworkMediator = factory.GetNew<INetworkMediator>();
 
         Facade.NetworkMediator.PlayerRepository.onPlayerAddedSubscription += HandleNewClientConnected;
         Facade.NetworkMediator.PlayerRepository.onPlayerRemovedSubscription += HandleNewClientDisconnected;
 
         Facade.NetworkMediator.ChangeEngineProxy(Facade);
-        
+
         Facade.NetworkMediator.StartServer(portNumber, maxPlayers);
     }
 
@@ -144,19 +145,6 @@ public class RTSNetworkManager : MonoBehaviour
 
                 Facade.NetworkMediator.SendReliableMessage(spawnMessage);
 
-                SpawnEntityMessage spawnCommander = spawnPool.Get();
-                spawnCommander.Id = ServerGetNewEntityId();
-                spawnCommander.OwnerId = gameInstanceOwner;
-                spawnCommander.PrefabId = commander.GetComponent<NetworkEntity>().PrefabId;
-
-                spawnCommander.Position = Vector3.zero;
-                spawnCommander.Rotation = Quaternion.identity;
-                spawnCommander.Scale = Vector3.one;
-
-                EntitySpawner.SpawnEntityFromMessage(Facade, spawnCommander);
-
-                Facade.NetworkMediator.SendReliableMessage(spawnCommander);
-
                 Transform parentToSpawnPoints = GameObject.FindGameObjectWithTag("SpawnPoints").transform;
 
                 List<int> occupiedIndexes = new List<int>();
@@ -195,7 +183,7 @@ public class RTSNetworkManager : MonoBehaviour
     }
 
     public void ServerHandleClientConnected(IPlayerSignature player)
-    {        
+    {
         if (isGameInProgress)
         {
             // Here I need to find a way to disconnect a person
@@ -204,7 +192,7 @@ public class RTSNetworkManager : MonoBehaviour
         }
 
         // Need to spawn new player object from a message and tell all the other clients to also spawn it
-        // set its values as name color and owner
+        // Set its values as name color and owner
         var playerSpawnMessage = new SpawnPlayerObjectMessage();
         playerSpawnMessage.Id = ServerGetNewEntityId();
         playerSpawnMessage.OwnerId = player;
@@ -221,11 +209,11 @@ public class RTSNetworkManager : MonoBehaviour
         var color = Random.ColorHSV();
         playerSpawnMessage.Red = color.r;
         playerSpawnMessage.Green = color.g;
-        playerSpawnMessage.Blue = color.b;        
+        playerSpawnMessage.Blue = color.b;
 
         SpawnPlayerObjectInterpreter.Instance.Interpret(Facade.NetworkMediator, null, playerSpawnMessage);
 
-        Facade.NetworkMediator.SendReliableMessage(playerSpawnMessage);        
+        Facade.NetworkMediator.SendReliableMessage(playerSpawnMessage);
 
         // Tell the client to spawn all the previous PlayerObjects (with the values)
 
@@ -274,7 +262,7 @@ public class RTSNetworkManager : MonoBehaviour
             confirmMessage.ConfirmedPlayer = LocalPlayer.OwnerSignatureId;
 
             Facade.NetworkMediator.SendReliableMessage(confirmMessage);
-        }    
+        }
     }
 
     public void ClientHandleClientConnected(int obj)
@@ -310,7 +298,7 @@ public class RTSNetworkManager : MonoBehaviour
 
     public IEnumerator StartGame()
     {
-        if (Players.Count < 2 || isGameInProgress ) { yield break; }
+        if (Players.Count < 2 || isGameInProgress) { yield break; }
 
         isGameInProgress = true;
 

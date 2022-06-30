@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// The base component for all buildings. Holds information for the UI sprite, Id, price and name of the building.
+/// </summary>
 public class Building : NetworkBehaviour
 {
     [SerializeField] private Sprite icon = null;

@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// The base for every player. Fires the event when it gets destroyed.
+/// </summary>
 public class UnitBase : NetworkBehaviour
 {
     [SerializeField] private Health health = null;

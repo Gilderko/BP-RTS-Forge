@@ -1,11 +1,14 @@
+using Forge.Networking.Messaging;
+using Forge.Networking.Unity;
+using Forge.Networking.Unity.Messages;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Forge.Networking.Messaging;
-using Forge.Networking.Unity.Messages;
-using Forge.Networking.Unity;
 
+/// <summary>
+/// Handles spawning specific units assigned with a maximum que. Spawning happens on the server and is then replicated to clients.
+/// </summary>
 public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 {
     [SerializeField] private Health health = null;
@@ -121,7 +124,7 @@ public class UnitSpawner : NetworkBehaviour, IPointerClickHandler
 
         EntitySpawner.SpawnEntityFromMessage(RTSNetworkManager.Instance.Facade, spawnMessage);
 
-        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnMessage);        
+        RTSNetworkManager.Instance.Facade.NetworkMediator.SendReliableMessage(spawnMessage);
 
         // Send message to update number of units in que
         var spawnerUpdate = spawnerUpdateClientPool.Get();
